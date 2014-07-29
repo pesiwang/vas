@@ -4,6 +4,7 @@
 #include "handler/handler_server.h"
 #include "handler/handler_client.h"
 #include "event_base.h"
+#include "config.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ bool CHandler_Server::onRead(map<int, CBuffer*>& results)
 	int clientFd, sin_len = sizeof(struct sockaddr);
     struct sockaddr_in sin;
     while((clientFd = accept(this->_fd, (struct sockaddr *)&sin, (socklen_t *)&sin_len)) >= 0){
-		CEventBase::instance()->add(clientFd, new CHandler_Client(clientFd, 3), VAS_HANDLER_ROLE_NORMAL);
+		CEventBase::instance()->add(clientFd, new CHandler_Client(clientFd, CConfig::instance()->server.maxIdleTime), VAS_HANDLER_ROLE_NORMAL);
     }
 	return true;
 }

@@ -6,7 +6,7 @@
 class CBuffer
 {
 public:
-	CBuffer(size_t capacity = 1);
+	CBuffer(size_t capacity = 1024);
 	~CBuffer();
 	size_t size() const { return _size; }
 	size_t capacity() const { return _capacity; }

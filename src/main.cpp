@@ -52,6 +52,7 @@ int main(int argc, char* argv[])
 		CEventBase::instance()->add(listenerFd, new CHandler_Server(listenerFd, 0), VAS_HANDLER_ROLE_LISTENER);
 		CEventBase::instance()->start();
 		CEventBase::release();
+		CConfig::release();
 	}
 	catch(VAS_ERROR &error){
 		cout<<"catch a error"<<endl;

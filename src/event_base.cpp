@@ -45,15 +45,10 @@ void CEventBase::Helper::forkAsDaemon()
 void CEventBase::Helper::setResourceLimit(int limit)
 {
 	struct rlimit resource;
-	if(getrlimit(RLIMIT_NOFILE, &resource) < 0)
+	resource.rlim_cur = limit;
+	resource.rlim_max = limit;
+	if(setrlimit(RLIMIT_NOFILE, &resource) < 0)
 		throw VAS_ERR_INTERNAL;
-
-	if(resource.rlim_cur < (rlim_t)limit){
-		resource.rlim_cur = limit;
-		resource.rlim_max = limit;
-		if(setrlimit(RLIMIT_NOFILE, &resource) < 0)
-			throw VAS_ERR_INTERNAL;
-	}
 }
 
 ///////////////////////////////////////////////////////
