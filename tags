@@ -1,0 +1,368 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CBuffer	include/buffer.h	/^	CBuffer(size_t capacity = 1);$/;"	p	class:CBuffer	access:public	signature:(size_t capacity = 1)
+CBuffer	include/buffer.h	/^class CBuffer$/;"	c
+CBuffer	src/buffer.cpp	/^CBuffer::CBuffer(size_t capacity) : _size(0), _capacity(capacity)$/;"	f	class:CBuffer	signature:(size_t capacity)
+CBuffer::CBuffer	include/buffer.h	/^	CBuffer(size_t capacity = 1);$/;"	p	class:CBuffer	access:public	signature:(size_t capacity = 1)
+CBuffer::CBuffer	src/buffer.cpp	/^CBuffer::CBuffer(size_t capacity) : _size(0), _capacity(capacity)$/;"	f	class:CBuffer	signature:(size_t capacity)
+CBuffer::_capacity	include/buffer.h	/^	size_t _capacity;$/;"	m	class:CBuffer	access:private
+CBuffer::_cursor_beg_ptr	include/buffer.h	/^	char *_cursor_beg_ptr, *_cursor_end_ptr;$/;"	m	class:CBuffer	access:private
+CBuffer::_cursor_end_ptr	include/buffer.h	/^	char *_cursor_beg_ptr, *_cursor_end_ptr;$/;"	m	class:CBuffer	access:private
+CBuffer::_data_beg_ptr	include/buffer.h	/^	char *_data_beg_ptr, *_data_end_ptr;$/;"	m	class:CBuffer	access:private
+CBuffer::_data_end_ptr	include/buffer.h	/^	char *_data_beg_ptr, *_data_end_ptr;$/;"	m	class:CBuffer	access:private
+CBuffer::_size	include/buffer.h	/^	size_t _size;$/;"	m	class:CBuffer	access:private
+CBuffer::append	include/buffer.h	/^	void append(CBuffer* buffer);$/;"	p	class:CBuffer	access:public	signature:(CBuffer* buffer)
+CBuffer::append	src/buffer.cpp	/^void CBuffer::append(CBuffer* buffer)$/;"	f	class:CBuffer	signature:(CBuffer* buffer)
+CBuffer::capacity	include/buffer.h	/^	size_t capacity() const { return _capacity; }$/;"	f	class:CBuffer	access:public	signature:() const
+CBuffer::freespace	include/buffer.h	/^	size_t freespace() const { return _capacity - _size; }$/;"	f	class:CBuffer	access:public	signature:() const
+CBuffer::inflate	include/buffer.h	/^	void inflate();$/;"	p	class:CBuffer	access:private	signature:()
+CBuffer::inflate	src/buffer.cpp	/^void CBuffer::inflate()$/;"	f	class:CBuffer	signature:()
+CBuffer::peek	include/buffer.h	/^	size_t peek(char* data, size_t count) const;$/;"	p	class:CBuffer	access:public	signature:(char* data, size_t count) const
+CBuffer::peek	src/buffer.cpp	/^size_t CBuffer::peek(char* data, size_t count) const$/;"	f	class:CBuffer	signature:(char* data, size_t count) const
+CBuffer::peekByte	include/buffer.h	/^	char peekByte() const;$/;"	p	class:CBuffer	access:public	signature:() const
+CBuffer::peekByte	src/buffer.cpp	/^char CBuffer::peekByte() const$/;"	f	class:CBuffer	signature:() const
+CBuffer::peekInt	include/buffer.h	/^	int peekInt() const;$/;"	p	class:CBuffer	access:public	signature:() const
+CBuffer::peekInt	src/buffer.cpp	/^int CBuffer::peekInt() const$/;"	f	class:CBuffer	signature:() const
+CBuffer::peekShort	include/buffer.h	/^	short peekShort() const;$/;"	p	class:CBuffer	access:public	signature:() const
+CBuffer::peekShort	src/buffer.cpp	/^short CBuffer::peekShort() const$/;"	f	class:CBuffer	signature:() const
+CBuffer::peekUnsignedByte	include/buffer.h	/^	unsigned char peekUnsignedByte() const;$/;"	p	class:CBuffer	access:public	signature:() const
+CBuffer::peekUnsignedByte	src/buffer.cpp	/^unsigned char CBuffer::peekUnsignedByte() const$/;"	f	class:CBuffer	signature:() const
+CBuffer::peekUnsignedInt	include/buffer.h	/^	unsigned int peekUnsignedInt() const;$/;"	p	class:CBuffer	access:public	signature:() const
+CBuffer::peekUnsignedInt	src/buffer.cpp	/^unsigned int CBuffer::peekUnsignedInt() const$/;"	f	class:CBuffer	signature:() const
+CBuffer::peekUnsignedShort	include/buffer.h	/^	unsigned short peekUnsignedShort() const;$/;"	p	class:CBuffer	access:public	signature:() const
+CBuffer::peekUnsignedShort	src/buffer.cpp	/^unsigned short CBuffer::peekUnsignedShort() const$/;"	f	class:CBuffer	signature:() const
+CBuffer::read	include/buffer.h	/^	size_t read(char* data, size_t count);$/;"	p	class:CBuffer	access:public	signature:(char* data, size_t count)
+CBuffer::read	src/buffer.cpp	/^size_t CBuffer::read(char* data, size_t count)$/;"	f	class:CBuffer	signature:(char* data, size_t count)
+CBuffer::readByte	include/buffer.h	/^	char readByte();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::readByte	src/buffer.cpp	/^char CBuffer::readByte()$/;"	f	class:CBuffer	signature:()
+CBuffer::readInt	include/buffer.h	/^	int readInt();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::readInt	src/buffer.cpp	/^int CBuffer::readInt()$/;"	f	class:CBuffer	signature:()
+CBuffer::readShort	include/buffer.h	/^	short readShort();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::readShort	src/buffer.cpp	/^short CBuffer::readShort()$/;"	f	class:CBuffer	signature:()
+CBuffer::readUnsignedByte	include/buffer.h	/^	unsigned char readUnsignedByte();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::readUnsignedByte	src/buffer.cpp	/^unsigned char CBuffer::readUnsignedByte()$/;"	f	class:CBuffer	signature:()
+CBuffer::readUnsignedInt	include/buffer.h	/^	unsigned int readUnsignedInt();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::readUnsignedInt	src/buffer.cpp	/^unsigned int CBuffer::readUnsignedInt()$/;"	f	class:CBuffer	signature:()
+CBuffer::readUnsignedShort	include/buffer.h	/^	unsigned short readUnsignedShort();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::readUnsignedShort	src/buffer.cpp	/^unsigned short CBuffer::readUnsignedShort()$/;"	f	class:CBuffer	signature:()
+CBuffer::shrink	include/buffer.h	/^	size_t shrink(size_t count);$/;"	p	class:CBuffer	access:public	signature:(size_t count)
+CBuffer::shrink	src/buffer.cpp	/^size_t CBuffer::shrink(size_t count)$/;"	f	class:CBuffer	signature:(size_t count)
+CBuffer::shrinkByte	include/buffer.h	/^	void shrinkByte();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::shrinkByte	src/buffer.cpp	/^void CBuffer::shrinkByte()$/;"	f	class:CBuffer	signature:()
+CBuffer::shrinkInt	include/buffer.h	/^	void shrinkInt();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::shrinkInt	src/buffer.cpp	/^void CBuffer::shrinkInt()$/;"	f	class:CBuffer	signature:()
+CBuffer::shrinkShort	include/buffer.h	/^	void shrinkShort();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::shrinkShort	src/buffer.cpp	/^void CBuffer::shrinkShort()$/;"	f	class:CBuffer	signature:()
+CBuffer::shrinkUnsignedByte	include/buffer.h	/^	void shrinkUnsignedByte();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::shrinkUnsignedByte	src/buffer.cpp	/^void CBuffer::shrinkUnsignedByte()$/;"	f	class:CBuffer	signature:()
+CBuffer::shrinkUnsignedInt	include/buffer.h	/^	void shrinkUnsignedInt();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::shrinkUnsignedInt	src/buffer.cpp	/^void CBuffer::shrinkUnsignedInt()$/;"	f	class:CBuffer	signature:()
+CBuffer::shrinkUnsignedShort	include/buffer.h	/^	void shrinkUnsignedShort();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::shrinkUnsignedShort	src/buffer.cpp	/^void CBuffer::shrinkUnsignedShort()$/;"	f	class:CBuffer	signature:()
+CBuffer::size	include/buffer.h	/^	size_t size() const { return _size; }$/;"	f	class:CBuffer	access:public	signature:() const
+CBuffer::write	include/buffer.h	/^	void write(const char* data, size_t count);$/;"	p	class:CBuffer	access:public	signature:(const char* data, size_t count)
+CBuffer::write	src/buffer.cpp	/^void CBuffer::write(const char* data, size_t count)$/;"	f	class:CBuffer	signature:(const char* data, size_t count)
+CBuffer::writeByte	include/buffer.h	/^	void writeByte(const char data);$/;"	p	class:CBuffer	access:public	signature:(const char data)
+CBuffer::writeByte	src/buffer.cpp	/^void CBuffer::writeByte(const char data)$/;"	f	class:CBuffer	signature:(const char data)
+CBuffer::writeInt	include/buffer.h	/^	void writeInt(const int data);$/;"	p	class:CBuffer	access:public	signature:(const int data)
+CBuffer::writeInt	src/buffer.cpp	/^void CBuffer::writeInt(const int data)$/;"	f	class:CBuffer	signature:(const int data)
+CBuffer::writeShort	include/buffer.h	/^	void writeShort(const short data);$/;"	p	class:CBuffer	access:public	signature:(const short data)
+CBuffer::writeShort	src/buffer.cpp	/^void CBuffer::writeShort(const short data)$/;"	f	class:CBuffer	signature:(const short data)
+CBuffer::writeUnsignedByte	include/buffer.h	/^	void writeUnsignedByte(const unsigned char data);$/;"	p	class:CBuffer	access:public	signature:(const unsigned char data)
+CBuffer::writeUnsignedByte	src/buffer.cpp	/^void CBuffer::writeUnsignedByte(const unsigned char data)$/;"	f	class:CBuffer	signature:(const unsigned char data)
+CBuffer::writeUnsignedInt	include/buffer.h	/^	void writeUnsignedInt(const unsigned int data);$/;"	p	class:CBuffer	access:public	signature:(const unsigned int data)
+CBuffer::writeUnsignedInt	src/buffer.cpp	/^void CBuffer::writeUnsignedInt(const unsigned int data)$/;"	f	class:CBuffer	signature:(const unsigned int data)
+CBuffer::writeUnsignedShort	include/buffer.h	/^	void writeUnsignedShort(const unsigned short data);$/;"	p	class:CBuffer	access:public	signature:(const unsigned short data)
+CBuffer::writeUnsignedShort	src/buffer.cpp	/^void CBuffer::writeUnsignedShort(const unsigned short data)$/;"	f	class:CBuffer	signature:(const unsigned short data)
+CBuffer::~CBuffer	include/buffer.h	/^	~CBuffer();$/;"	p	class:CBuffer	access:public	signature:()
+CBuffer::~CBuffer	src/buffer.cpp	/^CBuffer::~CBuffer()$/;"	f	class:CBuffer	signature:()
+CConfig	include/config.h	/^	CConfig();$/;"	p	class:CConfig	access:protected	signature:()
+CConfig	include/config.h	/^class CConfig$/;"	c
+CConfig	src/config.cpp	/^CConfig::CConfig()$/;"	f	class:CConfig	signature:()
+CConfig::CConfig	include/config.h	/^	CConfig();$/;"	p	class:CConfig	access:protected	signature:()
+CConfig::CConfig	src/config.cpp	/^CConfig::CConfig()$/;"	f	class:CConfig	signature:()
+CConfig::CConfigNetwork	include/config.h	/^	class CConfigNetwork$/;"	c	class:CConfig	access:private
+CConfig::CConfigNetwork::host	include/config.h	/^		char host[16];$/;"	m	class:CConfig::CConfigNetwork	access:public
+CConfig::CConfigNetwork::port	include/config.h	/^		unsigned short port;$/;"	m	class:CConfig::CConfigNetwork	access:public
+CConfig::CConfigServer	include/config.h	/^	class CConfigServer$/;"	c	class:CConfig	access:private
+CConfig::CConfigServer::daemonize	include/config.h	/^		bool daemonize;$/;"	m	class:CConfig::CConfigServer	access:public
+CConfig::CConfigServer::maxClients	include/config.h	/^		int maxClients;$/;"	m	class:CConfig::CConfigServer	access:public
+CConfig::CConfigServer::maxIdleTime	include/config.h	/^		int maxIdleTime;$/;"	m	class:CConfig::CConfigServer	access:public
+CConfig::_instance	include/config.h	/^	static CConfig* _instance;$/;"	m	class:CConfig	access:protected
+CConfig::_instance	src/config.cpp	/^CConfig* CConfig::_instance = NULL;$/;"	m	class:CConfig	file:
+CConfig::_pathname	include/config.h	/^	static const char* _pathname;$/;"	m	class:CConfig	access:protected
+CConfig::_pathname	src/config.cpp	/^const char* CConfig::_pathname = "etc\/config.ini";$/;"	m	class:CConfig	file:
+CConfig::instance	include/config.h	/^    static CConfig* instance();$/;"	p	class:CConfig	access:public	signature:()
+CConfig::instance	src/config.cpp	/^CConfig* CConfig::instance()$/;"	f	class:CConfig	signature:()
+CConfig::network	include/config.h	/^	CConfigNetwork network;$/;"	m	class:CConfig	access:public
+CConfig::release	include/config.h	/^    static void release();$/;"	p	class:CConfig	access:public	signature:()
+CConfig::release	src/config.cpp	/^void CConfig::release()$/;"	f	class:CConfig	signature:()
+CConfig::server	include/config.h	/^	CConfigServer server;$/;"	m	class:CConfig	access:public
+CConfig::setPathName	include/config.h	/^	static void setPathName(const char* pathname);$/;"	p	class:CConfig	access:public	signature:(const char* pathname)
+CConfig::setPathName	src/config.cpp	/^void CConfig::setPathName(const char* pathname)$/;"	f	class:CConfig	signature:(const char* pathname)
+CConfig::~CConfig	include/config.h	/^	virtual ~CConfig();$/;"	p	class:CConfig	access:protected	signature:()
+CConfig::~CConfig	src/config.cpp	/^CConfig::~CConfig()$/;"	f	class:CConfig	signature:()
+CConfigNetwork	include/config.h	/^	class CConfigNetwork$/;"	c	class:CConfig	access:private
+CConfigServer	include/config.h	/^	class CConfigServer$/;"	c	class:CConfig	access:private
+CEventBase	include/event_base.h	/^	CEventBase();$/;"	p	class:CEventBase	access:protected	signature:()
+CEventBase	include/event_base.h	/^class CEventBase$/;"	c
+CEventBase	include/handler.h	/^	friend class CEventBase;$/;"	x
+CEventBase	include/handler.h	/^class CEventBase;$/;"	x
+CEventBase	src/event_base.cpp	/^CEventBase::CEventBase() : _status(EBS_STOPPED)$/;"	f	class:CEventBase	signature:()
+CEventBase::CEventBase	include/event_base.h	/^	CEventBase();$/;"	p	class:CEventBase	access:protected	signature:()
+CEventBase::CEventBase	src/event_base.cpp	/^CEventBase::CEventBase() : _status(EBS_STOPPED)$/;"	f	class:CEventBase	signature:()
+CEventBase::Helper	include/event_base.h	/^	class Helper$/;"	c	class:CEventBase	access:public
+CEventBase::Helper::setNonBlocking	include/event_base.h	/^		static void setNonBlocking(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
+CEventBase::Helper::setNonBlocking	src/event_base.cpp	/^void CEventBase::Helper::setNonBlocking(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
+CEventBase::Helper::setReuseAddress	include/event_base.h	/^		static void setReuseAddress(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
+CEventBase::Helper::setReuseAddress	src/event_base.cpp	/^void CEventBase::Helper::setReuseAddress(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
+CEventBase::_doBroadcast	include/event_base.h	/^	void _doBroadcast(std::map<int, CBuffer*>& results);$/;"	p	class:CEventBase	access:protected	signature:(std::map<int, CBuffer*>& results)
+CEventBase::_doBroadcast	src/event_base.cpp	/^void CEventBase::_doBroadcast(map<int, CBuffer*>& results)$/;"	f	class:CEventBase	signature:(map<int, CBuffer*>& results)
+CEventBase::_doClose	include/event_base.h	/^	void _doClose(int fd, VAS_REASON reason);$/;"	p	class:CEventBase	access:protected	signature:(int fd, VAS_REASON reason)
+CEventBase::_doClose	src/event_base.cpp	/^void CEventBase::_doClose(int fd, VAS_REASON reason)$/;"	f	class:CEventBase	signature:(int fd, VAS_REASON reason)
+CEventBase::_doRead	include/event_base.h	/^	CHandler* _doRead(int fd);$/;"	p	class:CEventBase	access:protected	signature:(int fd)
+CEventBase::_doRead	src/event_base.cpp	/^CHandler* CEventBase::_doRead(int fd)$/;"	f	class:CEventBase	signature:(int fd)
+CEventBase::_doTimer	include/event_base.h	/^	void _doTimer();$/;"	p	class:CEventBase	access:protected	signature:()
+CEventBase::_doTimer	src/event_base.cpp	/^void CEventBase::_doTimer()$/;"	f	class:CEventBase	signature:()
+CEventBase::_doWrite	include/event_base.h	/^	CHandler* _doWrite(int fd);$/;"	p	class:CEventBase	access:protected	signature:(int fd)
+CEventBase::_doWrite	src/event_base.cpp	/^CHandler* CEventBase::_doWrite(int fd)$/;"	f	class:CEventBase	signature:(int fd)
+CEventBase::_instance	include/event_base.h	/^	static CEventBase* _instance;$/;"	m	class:CEventBase	access:protected
+CEventBase::_instance	src/event_base.cpp	/^CEventBase* CEventBase::_instance = NULL;$/;"	m	class:CEventBase	file:
+CEventBase::_sockets	include/event_base.h	/^	std::map<int, CHandler*> _sockets;$/;"	m	class:CEventBase	access:protected
+CEventBase::_status	include/event_base.h	/^	volatile EventBaseStatus _status;$/;"	m	class:CEventBase	access:protected
+CEventBase::add	include/event_base.h	/^	void add(int fd, CHandler* handler, VAS_HANDLER_ROLE role);$/;"	p	class:CEventBase	access:public	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
+CEventBase::add	src/event_base.cpp	/^void CEventBase::add(int fd, CHandler* handler, VAS_HANDLER_ROLE role)$/;"	f	class:CEventBase	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
+CEventBase::instance	include/event_base.h	/^	static CEventBase* instance();$/;"	p	class:CEventBase	access:public	signature:()
+CEventBase::instance	src/event_base.cpp	/^CEventBase* CEventBase::instance()$/;"	f	class:CEventBase	signature:()
+CEventBase::release	include/event_base.h	/^	static void release();$/;"	p	class:CEventBase	access:public	signature:()
+CEventBase::release	src/event_base.cpp	/^void CEventBase::release()$/;"	f	class:CEventBase	signature:()
+CEventBase::start	include/event_base.h	/^	void start();$/;"	p	class:CEventBase	access:public	signature:()
+CEventBase::start	src/event_base.cpp	/^void CEventBase::start()$/;"	f	class:CEventBase	signature:()
+CEventBase::stop	include/event_base.h	/^	void stop();$/;"	p	class:CEventBase	access:public	signature:()
+CEventBase::stop	src/event_base.cpp	/^void CEventBase::stop()$/;"	f	class:CEventBase	signature:()
+CEventBase::~CEventBase	include/event_base.h	/^	virtual ~CEventBase();$/;"	p	class:CEventBase	access:protected	signature:()
+CEventBase::~CEventBase	src/event_base.cpp	/^CEventBase::~CEventBase()$/;"	f	class:CEventBase	signature:()
+CHandler	include/handler.h	/^	CHandler(int fd, int timeout);$/;"	p	class:CHandler	access:public	signature:(int fd, int timeout)
+CHandler	include/handler.h	/^class CHandler$/;"	c
+CHandler	src/handler.cpp	/^CHandler::CHandler(int fd, int timeout) : _fd(fd), _timeout(timeout)$/;"	f	class:CHandler	signature:(int fd, int timeout)
+CHandler::CEventBase	include/handler.h	/^	friend class CEventBase;$/;"	x
+CHandler::CHandler	include/handler.h	/^	CHandler(int fd, int timeout);$/;"	p	class:CHandler	access:public	signature:(int fd, int timeout)
+CHandler::CHandler	src/handler.cpp	/^CHandler::CHandler(int fd, int timeout) : _fd(fd), _timeout(timeout)$/;"	f	class:CHandler	signature:(int fd, int timeout)
+CHandler::_fd	include/handler.h	/^	int _fd;$/;"	m	class:CHandler	access:protected
+CHandler::_input	include/handler.h	/^	CBuffer *_input, *_output;$/;"	m	class:CHandler	access:protected
+CHandler::_output	include/handler.h	/^	CBuffer *_input, *_output;$/;"	m	class:CHandler	access:protected
+CHandler::_time	include/handler.h	/^	time_t _time;$/;"	m	class:CHandler	access:protected
+CHandler::_timeout	include/handler.h	/^	int _timeout;$/;"	m	class:CHandler	access:protected
+CHandler::onClosed	include/handler.h	/^	virtual void onClosed(VAS_REASON reason);$/;"	p	class:CHandler	access:public	signature:(VAS_REASON reason)
+CHandler::onClosed	src/handler.cpp	/^void CHandler::onClosed(VAS_REASON reason)$/;"	f	class:CHandler	signature:(VAS_REASON reason)
+CHandler::onRead	include/handler.h	/^	virtual bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler	access:public	signature:(std::map<int, CBuffer*>& results)
+CHandler::onRead	src/handler.cpp	/^bool CHandler::onRead(std::map<int, CBuffer*>& results)$/;"	f	class:CHandler	signature:(std::map<int, CBuffer*>& results)
+CHandler::onWritten	include/handler.h	/^	virtual bool onWritten();$/;"	p	class:CHandler	access:public	signature:()
+CHandler::onWritten	src/handler.cpp	/^bool CHandler::onWritten()$/;"	f	class:CHandler	signature:()
+CHandler::~CHandler	include/handler.h	/^	virtual ~CHandler();$/;"	p	class:CHandler	access:public	signature:()
+CHandler::~CHandler	src/handler.cpp	/^CHandler::~CHandler()$/;"	f	class:CHandler	signature:()
+CHandler_Client	include/handler/handler_client.h	/^	CHandler_Client(int fd, int timeout);$/;"	p	class:CHandler_Client	access:public	signature:(int fd, int timeout)
+CHandler_Client	include/handler/handler_client.h	/^class CHandler_Client : public CHandler$/;"	c	inherits:CHandler
+CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::CHandler_Client(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Client	signature:(int fd, int timeout)
+CHandler_Client::CHandler_Client	include/handler/handler_client.h	/^	CHandler_Client(int fd, int timeout);$/;"	p	class:CHandler_Client	access:public	signature:(int fd, int timeout)
+CHandler_Client::CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::CHandler_Client(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Client	signature:(int fd, int timeout)
+CHandler_Client::onRead	include/handler/handler_client.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Client	access:public	signature:(std::map<int, CBuffer*>& results)
+CHandler_Client::onRead	src/handler/handler_client.cpp	/^bool CHandler_Client::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Client	signature:(map<int, CBuffer*>& results)
+CHandler_Client::~CHandler_Client	include/handler/handler_client.h	/^	virtual ~CHandler_Client();$/;"	p	class:CHandler_Client	access:public	signature:()
+CHandler_Client::~CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::~CHandler_Client()$/;"	f	class:CHandler_Client	signature:()
+CHandler_Server	include/handler/handler_server.h	/^	CHandler_Server(int fd, int timeout);$/;"	p	class:CHandler_Server	access:public	signature:(int fd, int timeout)
+CHandler_Server	include/handler/handler_server.h	/^class CHandler_Server : public CHandler$/;"	c	inherits:CHandler
+CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::CHandler_Server(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Server	signature:(int fd, int timeout)
+CHandler_Server::CHandler_Server	include/handler/handler_server.h	/^	CHandler_Server(int fd, int timeout);$/;"	p	class:CHandler_Server	access:public	signature:(int fd, int timeout)
+CHandler_Server::CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::CHandler_Server(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Server	signature:(int fd, int timeout)
+CHandler_Server::onRead	include/handler/handler_server.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Server	access:public	signature:(std::map<int, CBuffer*>& results)
+CHandler_Server::onRead	src/handler/handler_server.cpp	/^bool CHandler_Server::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Server	signature:(map<int, CBuffer*>& results)
+CHandler_Server::~CHandler_Server	include/handler/handler_server.h	/^	virtual ~CHandler_Server();$/;"	p	class:CHandler_Server	access:public	signature:()
+CHandler_Server::~CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::~CHandler_Server()$/;"	f	class:CHandler_Server	signature:()
+CXX	Makefile	/^CXX=g++$/;"	m
+CXXFLAG	Makefile	/^CXXFLAG=-g -Wall -DDEBUG$/;"	m
+EBS_RUNNING	include/event_base.h	/^	EBS_RUNNING,$/;"	e	enum:EventBaseStatus
+EBS_STOPPED	include/event_base.h	/^	EBS_STOPPED = 0,$/;"	e	enum:EventBaseStatus
+EBS_STOPPING	include/event_base.h	/^	EBS_STOPPING$/;"	e	enum:EventBaseStatus
+EventBaseStatus	include/event_base.h	/^enum EventBaseStatus$/;"	g
+Helper	include/event_base.h	/^	class Helper$/;"	c	class:CEventBase	access:public
+INC	Makefile	/^INC=-I .\/include$/;"	m
+MATCH	src/config.cpp	15;"	d	file:
+VAS_ERROR	include/definition.h	/^enum VAS_ERROR $/;"	g
+VAS_ERR_INTERNAL	include/definition.h	/^	VAS_ERR_INTERNAL = 0x0001$/;"	e	enum:VAS_ERROR
+VAS_HANDLER_ROLE	include/definition.h	/^enum VAS_HANDLER_ROLE$/;"	g
+VAS_HANDLER_ROLE_LISTENER	include/definition.h	/^	VAS_HANDLER_ROLE_LISTENER = 0x01,$/;"	e	enum:VAS_HANDLER_ROLE
+VAS_HANDLER_ROLE_NORMAL	include/definition.h	/^	VAS_HANDLER_ROLE_NORMAL	= 0x02$/;"	e	enum:VAS_HANDLER_ROLE
+VAS_REASON	include/definition.h	/^enum VAS_REASON$/;"	g
+VAS_REASON_CLIENT_CLOSED	include/definition.h	/^	VAS_REASON_CLIENT_CLOSED	= 0x01,$/;"	e	enum:VAS_REASON
+VAS_REASON_SERVER_CLOSED	include/definition.h	/^	VAS_REASON_SERVER_CLOSED,$/;"	e	enum:VAS_REASON
+VAS_REASON_TIMEOUT	include/definition.h	/^	VAS_REASON_TIMEOUT$/;"	e	enum:VAS_REASON
+_VAS_BUFFER_H	include/buffer.h	2;"	d
+_VAS_CONFIG_H	include/config.h	2;"	d
+_VAS_DEFINITION_H	include/definition.h	2;"	d
+_VAS_EVENT_BASE_H	include/event_base.h	2;"	d
+_VAS_HANDLER_CLIENT_H	include/handler/handler_client.h	2;"	d
+_VAS_HANDLER_H	include/handler.h	2;"	d
+_VAS_HANDLER_SERVER_H	include/handler/handler_server.h	2;"	d
+_capacity	include/buffer.h	/^	size_t _capacity;$/;"	m	class:CBuffer	access:private
+_config_ini_handler	src/config.cpp	/^static void _config_ini_handler(void* context, const char* section, const char* name, const char* value){$/;"	f	file:	signature:(void* context, const char* section, const char* name, const char* value)
+_cursor_beg_ptr	include/buffer.h	/^	char *_cursor_beg_ptr, *_cursor_end_ptr;$/;"	m	class:CBuffer	access:private
+_cursor_end_ptr	include/buffer.h	/^	char *_cursor_beg_ptr, *_cursor_end_ptr;$/;"	m	class:CBuffer	access:private
+_data_beg_ptr	include/buffer.h	/^	char *_data_beg_ptr, *_data_end_ptr;$/;"	m	class:CBuffer	access:private
+_data_end_ptr	include/buffer.h	/^	char *_data_beg_ptr, *_data_end_ptr;$/;"	m	class:CBuffer	access:private
+_doBroadcast	include/event_base.h	/^	void _doBroadcast(std::map<int, CBuffer*>& results);$/;"	p	class:CEventBase	access:protected	signature:(std::map<int, CBuffer*>& results)
+_doBroadcast	src/event_base.cpp	/^void CEventBase::_doBroadcast(map<int, CBuffer*>& results)$/;"	f	class:CEventBase	signature:(map<int, CBuffer*>& results)
+_doClose	include/event_base.h	/^	void _doClose(int fd, VAS_REASON reason);$/;"	p	class:CEventBase	access:protected	signature:(int fd, VAS_REASON reason)
+_doClose	src/event_base.cpp	/^void CEventBase::_doClose(int fd, VAS_REASON reason)$/;"	f	class:CEventBase	signature:(int fd, VAS_REASON reason)
+_doRead	include/event_base.h	/^	CHandler* _doRead(int fd);$/;"	p	class:CEventBase	access:protected	signature:(int fd)
+_doRead	src/event_base.cpp	/^CHandler* CEventBase::_doRead(int fd)$/;"	f	class:CEventBase	signature:(int fd)
+_doTimer	include/event_base.h	/^	void _doTimer();$/;"	p	class:CEventBase	access:protected	signature:()
+_doTimer	src/event_base.cpp	/^void CEventBase::_doTimer()$/;"	f	class:CEventBase	signature:()
+_doWrite	include/event_base.h	/^	CHandler* _doWrite(int fd);$/;"	p	class:CEventBase	access:protected	signature:(int fd)
+_doWrite	src/event_base.cpp	/^CHandler* CEventBase::_doWrite(int fd)$/;"	f	class:CEventBase	signature:(int fd)
+_fd	include/handler.h	/^	int _fd;$/;"	m	class:CHandler	access:protected
+_find_char_or_comment	src/config.cpp	/^static char* _find_char_or_comment(const char* s, char c){$/;"	f	file:	signature:(const char* s, char c)
+_ini_parse_file	src/config.cpp	/^static void _ini_parse_file(FILE* file, void (*handler)(void*, const char*, const char*, const char*), void* context);$/;"	p	file:	signature:(FILE* file, void (*handler)(void*, const char*, const char*, const char*), void* context)
+_ini_parse_file	src/config.cpp	/^static void _ini_parse_file(FILE* file, void (*handler)(void*, const char*, const char*, const char*), void* context){$/;"	f	file:	signature:(FILE* file, void (*handler)(void*, const char*, const char*, const char*), void* context)
+_input	include/handler.h	/^	CBuffer *_input, *_output;$/;"	m	class:CHandler	access:protected
+_instance	include/config.h	/^	static CConfig* _instance;$/;"	m	class:CConfig	access:protected
+_instance	include/event_base.h	/^	static CEventBase* _instance;$/;"	m	class:CEventBase	access:protected
+_instance	src/config.cpp	/^CConfig* CConfig::_instance = NULL;$/;"	m	class:CConfig	file:
+_instance	src/event_base.cpp	/^CEventBase* CEventBase::_instance = NULL;$/;"	m	class:CEventBase	file:
+_log_printf	include/definition.h	7;"	d
+_lskip	src/config.cpp	/^static char* _lskip(const char* s){$/;"	f	file:	signature:(const char* s)
+_output	include/handler.h	/^	CBuffer *_input, *_output;$/;"	m	class:CHandler	access:protected
+_pathname	include/config.h	/^	static const char* _pathname;$/;"	m	class:CConfig	access:protected
+_pathname	src/config.cpp	/^const char* CConfig::_pathname = "etc\/config.ini";$/;"	m	class:CConfig	file:
+_rstrip	src/config.cpp	/^static char* _rstrip(char* s){$/;"	f	file:	signature:(char* s)
+_size	include/buffer.h	/^	size_t _size;$/;"	m	class:CBuffer	access:private
+_sockets	include/event_base.h	/^	std::map<int, CHandler*> _sockets;$/;"	m	class:CEventBase	access:protected
+_status	include/event_base.h	/^	volatile EventBaseStatus _status;$/;"	m	class:CEventBase	access:protected
+_strncpy0	src/config.cpp	/^static inline char* _strncpy0(char* dest, const char* src, size_t size){$/;"	f	file:	signature:(char* dest, const char* src, size_t size)
+_time	include/handler.h	/^	time_t _time;$/;"	m	class:CHandler	access:protected
+_timeout	include/handler.h	/^	int _timeout;$/;"	m	class:CHandler	access:protected
+add	include/event_base.h	/^	void add(int fd, CHandler* handler, VAS_HANDLER_ROLE role);$/;"	p	class:CEventBase	access:public	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
+add	src/event_base.cpp	/^void CEventBase::add(int fd, CHandler* handler, VAS_HANDLER_ROLE role)$/;"	f	class:CEventBase	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
+append	include/buffer.h	/^	void append(CBuffer* buffer);$/;"	p	class:CBuffer	access:public	signature:(CBuffer* buffer)
+append	src/buffer.cpp	/^void CBuffer::append(CBuffer* buffer)$/;"	f	class:CBuffer	signature:(CBuffer* buffer)
+capacity	include/buffer.h	/^	size_t capacity() const { return _capacity; }$/;"	f	class:CBuffer	access:public	signature:() const
+daemonize	include/config.h	/^		bool daemonize;$/;"	m	class:CConfig::CConfigServer	access:public
+freespace	include/buffer.h	/^	size_t freespace() const { return _capacity - _size; }$/;"	f	class:CBuffer	access:public	signature:() const
+g_timeLast	src/event_base.cpp	/^time_t g_timeLast = g_timeNow;$/;"	v
+g_timeNow	src/event_base.cpp	/^time_t g_timeNow = time(NULL);$/;"	v
+g_timeNow	src/handler.cpp	/^extern time_t g_timeNow;$/;"	x
+handle_signal_int	src/main.cpp	/^static void handle_signal_int(int sig)$/;"	f	file:	signature:(int sig)
+host	include/config.h	/^		char host[16];$/;"	m	class:CConfig::CConfigNetwork	access:public
+inflate	include/buffer.h	/^	void inflate();$/;"	p	class:CBuffer	access:private	signature:()
+inflate	src/buffer.cpp	/^void CBuffer::inflate()$/;"	f	class:CBuffer	signature:()
+instance	include/config.h	/^    static CConfig* instance();$/;"	p	class:CConfig	access:public	signature:()
+instance	include/event_base.h	/^	static CEventBase* instance();$/;"	p	class:CEventBase	access:public	signature:()
+instance	src/config.cpp	/^CConfig* CConfig::instance()$/;"	f	class:CConfig	signature:()
+instance	src/event_base.cpp	/^CEventBase* CEventBase::instance()$/;"	f	class:CEventBase	signature:()
+log_debug	include/definition.h	11;"	d
+log_debug	include/definition.h	13;"	d
+log_error	include/definition.h	9;"	d
+main	src/main.cpp	/^int main(int argc, char* argv[])$/;"	f	signature:(int argc, char* argv[])
+maxClients	include/config.h	/^		int maxClients;$/;"	m	class:CConfig::CConfigServer	access:public
+maxIdleTime	include/config.h	/^		int maxIdleTime;$/;"	m	class:CConfig::CConfigServer	access:public
+network	include/config.h	/^	CConfigNetwork network;$/;"	m	class:CConfig	access:public
+onClosed	include/handler.h	/^	virtual void onClosed(VAS_REASON reason);$/;"	p	class:CHandler	access:public	signature:(VAS_REASON reason)
+onClosed	src/handler.cpp	/^void CHandler::onClosed(VAS_REASON reason)$/;"	f	class:CHandler	signature:(VAS_REASON reason)
+onRead	include/handler.h	/^	virtual bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler	access:public	signature:(std::map<int, CBuffer*>& results)
+onRead	include/handler/handler_client.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Client	access:public	signature:(std::map<int, CBuffer*>& results)
+onRead	include/handler/handler_server.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Server	access:public	signature:(std::map<int, CBuffer*>& results)
+onRead	src/handler.cpp	/^bool CHandler::onRead(std::map<int, CBuffer*>& results)$/;"	f	class:CHandler	signature:(std::map<int, CBuffer*>& results)
+onRead	src/handler/handler_client.cpp	/^bool CHandler_Client::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Client	signature:(map<int, CBuffer*>& results)
+onRead	src/handler/handler_server.cpp	/^bool CHandler_Server::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Server	signature:(map<int, CBuffer*>& results)
+onWritten	include/handler.h	/^	virtual bool onWritten();$/;"	p	class:CHandler	access:public	signature:()
+onWritten	src/handler.cpp	/^bool CHandler::onWritten()$/;"	f	class:CHandler	signature:()
+peek	include/buffer.h	/^	size_t peek(char* data, size_t count) const;$/;"	p	class:CBuffer	access:public	signature:(char* data, size_t count) const
+peek	src/buffer.cpp	/^size_t CBuffer::peek(char* data, size_t count) const$/;"	f	class:CBuffer	signature:(char* data, size_t count) const
+peekByte	include/buffer.h	/^	char peekByte() const;$/;"	p	class:CBuffer	access:public	signature:() const
+peekByte	src/buffer.cpp	/^char CBuffer::peekByte() const$/;"	f	class:CBuffer	signature:() const
+peekInt	include/buffer.h	/^	int peekInt() const;$/;"	p	class:CBuffer	access:public	signature:() const
+peekInt	src/buffer.cpp	/^int CBuffer::peekInt() const$/;"	f	class:CBuffer	signature:() const
+peekShort	include/buffer.h	/^	short peekShort() const;$/;"	p	class:CBuffer	access:public	signature:() const
+peekShort	src/buffer.cpp	/^short CBuffer::peekShort() const$/;"	f	class:CBuffer	signature:() const
+peekUnsignedByte	include/buffer.h	/^	unsigned char peekUnsignedByte() const;$/;"	p	class:CBuffer	access:public	signature:() const
+peekUnsignedByte	src/buffer.cpp	/^unsigned char CBuffer::peekUnsignedByte() const$/;"	f	class:CBuffer	signature:() const
+peekUnsignedInt	include/buffer.h	/^	unsigned int peekUnsignedInt() const;$/;"	p	class:CBuffer	access:public	signature:() const
+peekUnsignedInt	src/buffer.cpp	/^unsigned int CBuffer::peekUnsignedInt() const$/;"	f	class:CBuffer	signature:() const
+peekUnsignedShort	include/buffer.h	/^	unsigned short peekUnsignedShort() const;$/;"	p	class:CBuffer	access:public	signature:() const
+peekUnsignedShort	src/buffer.cpp	/^unsigned short CBuffer::peekUnsignedShort() const$/;"	f	class:CBuffer	signature:() const
+port	include/config.h	/^		unsigned short port;$/;"	m	class:CConfig::CConfigNetwork	access:public
+read	include/buffer.h	/^	size_t read(char* data, size_t count);$/;"	p	class:CBuffer	access:public	signature:(char* data, size_t count)
+read	src/buffer.cpp	/^size_t CBuffer::read(char* data, size_t count)$/;"	f	class:CBuffer	signature:(char* data, size_t count)
+readByte	include/buffer.h	/^	char readByte();$/;"	p	class:CBuffer	access:public	signature:()
+readByte	src/buffer.cpp	/^char CBuffer::readByte()$/;"	f	class:CBuffer	signature:()
+readInt	include/buffer.h	/^	int readInt();$/;"	p	class:CBuffer	access:public	signature:()
+readInt	src/buffer.cpp	/^int CBuffer::readInt()$/;"	f	class:CBuffer	signature:()
+readShort	include/buffer.h	/^	short readShort();$/;"	p	class:CBuffer	access:public	signature:()
+readShort	src/buffer.cpp	/^short CBuffer::readShort()$/;"	f	class:CBuffer	signature:()
+readUnsignedByte	include/buffer.h	/^	unsigned char readUnsignedByte();$/;"	p	class:CBuffer	access:public	signature:()
+readUnsignedByte	src/buffer.cpp	/^unsigned char CBuffer::readUnsignedByte()$/;"	f	class:CBuffer	signature:()
+readUnsignedInt	include/buffer.h	/^	unsigned int readUnsignedInt();$/;"	p	class:CBuffer	access:public	signature:()
+readUnsignedInt	src/buffer.cpp	/^unsigned int CBuffer::readUnsignedInt()$/;"	f	class:CBuffer	signature:()
+readUnsignedShort	include/buffer.h	/^	unsigned short readUnsignedShort();$/;"	p	class:CBuffer	access:public	signature:()
+readUnsignedShort	src/buffer.cpp	/^unsigned short CBuffer::readUnsignedShort()$/;"	f	class:CBuffer	signature:()
+release	include/config.h	/^    static void release();$/;"	p	class:CConfig	access:public	signature:()
+release	include/event_base.h	/^	static void release();$/;"	p	class:CEventBase	access:public	signature:()
+release	src/config.cpp	/^void CConfig::release()$/;"	f	class:CConfig	signature:()
+release	src/event_base.cpp	/^void CEventBase::release()$/;"	f	class:CEventBase	signature:()
+s_epollFd	src/event_base.cpp	/^static int s_epollFd;$/;"	v	file:
+server	include/config.h	/^	CConfigServer server;$/;"	m	class:CConfig	access:public
+setNonBlocking	include/event_base.h	/^		static void setNonBlocking(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
+setNonBlocking	src/event_base.cpp	/^void CEventBase::Helper::setNonBlocking(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
+setPathName	include/config.h	/^	static void setPathName(const char* pathname);$/;"	p	class:CConfig	access:public	signature:(const char* pathname)
+setPathName	src/config.cpp	/^void CConfig::setPathName(const char* pathname)$/;"	f	class:CConfig	signature:(const char* pathname)
+setReuseAddress	include/event_base.h	/^		static void setReuseAddress(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
+setReuseAddress	src/event_base.cpp	/^void CEventBase::Helper::setReuseAddress(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
+shrink	include/buffer.h	/^	size_t shrink(size_t count);$/;"	p	class:CBuffer	access:public	signature:(size_t count)
+shrink	src/buffer.cpp	/^size_t CBuffer::shrink(size_t count)$/;"	f	class:CBuffer	signature:(size_t count)
+shrinkByte	include/buffer.h	/^	void shrinkByte();$/;"	p	class:CBuffer	access:public	signature:()
+shrinkByte	src/buffer.cpp	/^void CBuffer::shrinkByte()$/;"	f	class:CBuffer	signature:()
+shrinkInt	include/buffer.h	/^	void shrinkInt();$/;"	p	class:CBuffer	access:public	signature:()
+shrinkInt	src/buffer.cpp	/^void CBuffer::shrinkInt()$/;"	f	class:CBuffer	signature:()
+shrinkShort	include/buffer.h	/^	void shrinkShort();$/;"	p	class:CBuffer	access:public	signature:()
+shrinkShort	src/buffer.cpp	/^void CBuffer::shrinkShort()$/;"	f	class:CBuffer	signature:()
+shrinkUnsignedByte	include/buffer.h	/^	void shrinkUnsignedByte();$/;"	p	class:CBuffer	access:public	signature:()
+shrinkUnsignedByte	src/buffer.cpp	/^void CBuffer::shrinkUnsignedByte()$/;"	f	class:CBuffer	signature:()
+shrinkUnsignedInt	include/buffer.h	/^	void shrinkUnsignedInt();$/;"	p	class:CBuffer	access:public	signature:()
+shrinkUnsignedInt	src/buffer.cpp	/^void CBuffer::shrinkUnsignedInt()$/;"	f	class:CBuffer	signature:()
+shrinkUnsignedShort	include/buffer.h	/^	void shrinkUnsignedShort();$/;"	p	class:CBuffer	access:public	signature:()
+shrinkUnsignedShort	src/buffer.cpp	/^void CBuffer::shrinkUnsignedShort()$/;"	f	class:CBuffer	signature:()
+size	include/buffer.h	/^	size_t size() const { return _size; }$/;"	f	class:CBuffer	access:public	signature:() const
+start	include/event_base.h	/^	void start();$/;"	p	class:CEventBase	access:public	signature:()
+start	src/event_base.cpp	/^void CEventBase::start()$/;"	f	class:CEventBase	signature:()
+stop	include/event_base.h	/^	void stop();$/;"	p	class:CEventBase	access:public	signature:()
+stop	src/event_base.cpp	/^void CEventBase::stop()$/;"	f	class:CEventBase	signature:()
+write	include/buffer.h	/^	void write(const char* data, size_t count);$/;"	p	class:CBuffer	access:public	signature:(const char* data, size_t count)
+write	src/buffer.cpp	/^void CBuffer::write(const char* data, size_t count)$/;"	f	class:CBuffer	signature:(const char* data, size_t count)
+writeByte	include/buffer.h	/^	void writeByte(const char data);$/;"	p	class:CBuffer	access:public	signature:(const char data)
+writeByte	src/buffer.cpp	/^void CBuffer::writeByte(const char data)$/;"	f	class:CBuffer	signature:(const char data)
+writeInt	include/buffer.h	/^	void writeInt(const int data);$/;"	p	class:CBuffer	access:public	signature:(const int data)
+writeInt	src/buffer.cpp	/^void CBuffer::writeInt(const int data)$/;"	f	class:CBuffer	signature:(const int data)
+writeShort	include/buffer.h	/^	void writeShort(const short data);$/;"	p	class:CBuffer	access:public	signature:(const short data)
+writeShort	src/buffer.cpp	/^void CBuffer::writeShort(const short data)$/;"	f	class:CBuffer	signature:(const short data)
+writeUnsignedByte	include/buffer.h	/^	void writeUnsignedByte(const unsigned char data);$/;"	p	class:CBuffer	access:public	signature:(const unsigned char data)
+writeUnsignedByte	src/buffer.cpp	/^void CBuffer::writeUnsignedByte(const unsigned char data)$/;"	f	class:CBuffer	signature:(const unsigned char data)
+writeUnsignedInt	include/buffer.h	/^	void writeUnsignedInt(const unsigned int data);$/;"	p	class:CBuffer	access:public	signature:(const unsigned int data)
+writeUnsignedInt	src/buffer.cpp	/^void CBuffer::writeUnsignedInt(const unsigned int data)$/;"	f	class:CBuffer	signature:(const unsigned int data)
+writeUnsignedShort	include/buffer.h	/^	void writeUnsignedShort(const unsigned short data);$/;"	p	class:CBuffer	access:public	signature:(const unsigned short data)
+writeUnsignedShort	src/buffer.cpp	/^void CBuffer::writeUnsignedShort(const unsigned short data)$/;"	f	class:CBuffer	signature:(const unsigned short data)
+~CBuffer	include/buffer.h	/^	~CBuffer();$/;"	p	class:CBuffer	access:public	signature:()
+~CBuffer	src/buffer.cpp	/^CBuffer::~CBuffer()$/;"	f	class:CBuffer	signature:()
+~CConfig	include/config.h	/^	virtual ~CConfig();$/;"	p	class:CConfig	access:protected	signature:()
+~CConfig	src/config.cpp	/^CConfig::~CConfig()$/;"	f	class:CConfig	signature:()
+~CEventBase	include/event_base.h	/^	virtual ~CEventBase();$/;"	p	class:CEventBase	access:protected	signature:()
+~CEventBase	src/event_base.cpp	/^CEventBase::~CEventBase()$/;"	f	class:CEventBase	signature:()
+~CHandler	include/handler.h	/^	virtual ~CHandler();$/;"	p	class:CHandler	access:public	signature:()
+~CHandler	src/handler.cpp	/^CHandler::~CHandler()$/;"	f	class:CHandler	signature:()
+~CHandler_Client	include/handler/handler_client.h	/^	virtual ~CHandler_Client();$/;"	p	class:CHandler_Client	access:public	signature:()
+~CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::~CHandler_Client()$/;"	f	class:CHandler_Client	signature:()
+~CHandler_Server	include/handler/handler_server.h	/^	virtual ~CHandler_Server();$/;"	p	class:CHandler_Server	access:public	signature:()
+~CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::~CHandler_Server()$/;"	f	class:CHandler_Server	signature:()
