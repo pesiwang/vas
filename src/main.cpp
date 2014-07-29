@@ -32,6 +32,10 @@ int main(int argc, char* argv[])
 	    if(sigemptyset(&sa.sa_mask) == -1 || sigaction(SIGINT, &sa, NULL) == -1)
     	    throw VAS_ERR_INTERNAL;
 
+		CEventBase::Helper::setResourceLimit(CConfig::instance()->server.maxClients);
+		if(CConfig::instance()->server.daemonize)
+			CEventBase::Helper::forkAsDaemon();
+
 		struct sockaddr_in sin;
 		memset(&sin, 0, sizeof(sin));
 		sin.sin_addr.s_addr = inet_addr(CConfig::instance()->network.host);

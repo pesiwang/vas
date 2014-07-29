@@ -20,6 +20,8 @@ public:
 	public:
 		static void setNonBlocking(int fd);
 		static void setReuseAddress(int fd);
+		static void forkAsDaemon();
+		static void setResourceLimit(int limit);
 	};
 
 public:

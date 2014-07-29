@@ -95,7 +95,7 @@ CConfig::CConfigServer::maxIdleTime	include/config.h	/^		int maxIdleTime;$/;"	m	
 CConfig::_instance	include/config.h	/^	static CConfig* _instance;$/;"	m	class:CConfig	access:protected
 CConfig::_instance	src/config.cpp	/^CConfig* CConfig::_instance = NULL;$/;"	m	class:CConfig	file:
 CConfig::_pathname	include/config.h	/^	static const char* _pathname;$/;"	m	class:CConfig	access:protected
-CConfig::_pathname	src/config.cpp	/^const char* CConfig::_pathname = "etc\/config.ini";$/;"	m	class:CConfig	file:
+CConfig::_pathname	src/config.cpp	/^const char* CConfig::_pathname = NULL;$/;"	m	class:CConfig	file:
 CConfig::instance	include/config.h	/^    static CConfig* instance();$/;"	p	class:CConfig	access:public	signature:()
 CConfig::instance	src/config.cpp	/^CConfig* CConfig::instance()$/;"	f	class:CConfig	signature:()
 CConfig::network	include/config.h	/^	CConfigNetwork network;$/;"	m	class:CConfig	access:public
@@ -116,8 +116,12 @@ CEventBase	src/event_base.cpp	/^CEventBase::CEventBase() : _status(EBS_STOPPED)$
 CEventBase::CEventBase	include/event_base.h	/^	CEventBase();$/;"	p	class:CEventBase	access:protected	signature:()
 CEventBase::CEventBase	src/event_base.cpp	/^CEventBase::CEventBase() : _status(EBS_STOPPED)$/;"	f	class:CEventBase	signature:()
 CEventBase::Helper	include/event_base.h	/^	class Helper$/;"	c	class:CEventBase	access:public
+CEventBase::Helper::forkAsDaemon	include/event_base.h	/^		static void forkAsDaemon();$/;"	p	class:CEventBase::Helper	access:public	signature:()
+CEventBase::Helper::forkAsDaemon	src/event_base.cpp	/^void CEventBase::Helper::forkAsDaemon()$/;"	f	class:CEventBase::Helper	signature:()
 CEventBase::Helper::setNonBlocking	include/event_base.h	/^		static void setNonBlocking(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
 CEventBase::Helper::setNonBlocking	src/event_base.cpp	/^void CEventBase::Helper::setNonBlocking(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
+CEventBase::Helper::setResourceLimit	include/event_base.h	/^		static void setResourceLimit(int limit);$/;"	p	class:CEventBase::Helper	access:public	signature:(int limit)
+CEventBase::Helper::setResourceLimit	src/event_base.cpp	/^void CEventBase::Helper::setResourceLimit(int limit)$/;"	f	class:CEventBase::Helper	signature:(int limit)
 CEventBase::Helper::setReuseAddress	include/event_base.h	/^		static void setReuseAddress(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
 CEventBase::Helper::setReuseAddress	src/event_base.cpp	/^void CEventBase::Helper::setReuseAddress(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
 CEventBase::_doBroadcast	include/event_base.h	/^	void _doBroadcast(std::map<int, CBuffer*>& results);$/;"	p	class:CEventBase	access:protected	signature:(std::map<int, CBuffer*>& results)
@@ -237,7 +241,7 @@ _log_printf	include/definition.h	7;"	d
 _lskip	src/config.cpp	/^static char* _lskip(const char* s){$/;"	f	file:	signature:(const char* s)
 _output	include/handler.h	/^	CBuffer *_input, *_output;$/;"	m	class:CHandler	access:protected
 _pathname	include/config.h	/^	static const char* _pathname;$/;"	m	class:CConfig	access:protected
-_pathname	src/config.cpp	/^const char* CConfig::_pathname = "etc\/config.ini";$/;"	m	class:CConfig	file:
+_pathname	src/config.cpp	/^const char* CConfig::_pathname = NULL;$/;"	m	class:CConfig	file:
 _rstrip	src/config.cpp	/^static char* _rstrip(char* s){$/;"	f	file:	signature:(char* s)
 _size	include/buffer.h	/^	size_t _size;$/;"	m	class:CBuffer	access:private
 _sockets	include/event_base.h	/^	std::map<int, CHandler*> _sockets;$/;"	m	class:CEventBase	access:protected
@@ -251,6 +255,8 @@ append	include/buffer.h	/^	void append(CBuffer* buffer);$/;"	p	class:CBuffer	acc
 append	src/buffer.cpp	/^void CBuffer::append(CBuffer* buffer)$/;"	f	class:CBuffer	signature:(CBuffer* buffer)
 capacity	include/buffer.h	/^	size_t capacity() const { return _capacity; }$/;"	f	class:CBuffer	access:public	signature:() const
 daemonize	include/config.h	/^		bool daemonize;$/;"	m	class:CConfig::CConfigServer	access:public
+forkAsDaemon	include/event_base.h	/^		static void forkAsDaemon();$/;"	p	class:CEventBase::Helper	access:public	signature:()
+forkAsDaemon	src/event_base.cpp	/^void CEventBase::Helper::forkAsDaemon()$/;"	f	class:CEventBase::Helper	signature:()
 freespace	include/buffer.h	/^	size_t freespace() const { return _capacity - _size; }$/;"	f	class:CBuffer	access:public	signature:() const
 g_timeLast	src/event_base.cpp	/^time_t g_timeLast = g_timeNow;$/;"	v
 g_timeNow	src/event_base.cpp	/^time_t g_timeNow = time(NULL);$/;"	v
@@ -319,6 +325,8 @@ setNonBlocking	include/event_base.h	/^		static void setNonBlocking(int fd);$/;"	
 setNonBlocking	src/event_base.cpp	/^void CEventBase::Helper::setNonBlocking(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
 setPathName	include/config.h	/^	static void setPathName(const char* pathname);$/;"	p	class:CConfig	access:public	signature:(const char* pathname)
 setPathName	src/config.cpp	/^void CConfig::setPathName(const char* pathname)$/;"	f	class:CConfig	signature:(const char* pathname)
+setResourceLimit	include/event_base.h	/^		static void setResourceLimit(int limit);$/;"	p	class:CEventBase::Helper	access:public	signature:(int limit)
+setResourceLimit	src/event_base.cpp	/^void CEventBase::Helper::setResourceLimit(int limit)$/;"	f	class:CEventBase::Helper	signature:(int limit)
 setReuseAddress	include/event_base.h	/^		static void setReuseAddress(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
 setReuseAddress	src/event_base.cpp	/^void CEventBase::Helper::setReuseAddress(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
 shrink	include/buffer.h	/^	size_t shrink(size_t count);$/;"	p	class:CBuffer	access:public	signature:(size_t count)

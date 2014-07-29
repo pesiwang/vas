@@ -2,9 +2,12 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <time.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "definition.h"
 #include "event_base.h"
 
@@ -25,6 +28,32 @@ void CEventBase::Helper::setReuseAddress(int fd)
 {
 	int optval = 1;
 	setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,(const void *)&optval, sizeof(optval));
+}
+
+void CEventBase::Helper::forkAsDaemon()
+{
+	pid_t pid;
+	if((pid = fork()) < 0)
+		return;
+	else if(pid != 0)
+		exit(0);
+
+	setsid();
+	return;
+}
+
+void CEventBase::Helper::setResourceLimit(int limit)
+{
+	struct rlimit resource;
+	if(getrlimit(RLIMIT_NOFILE, &resource) < 0)
+		throw VAS_ERR_INTERNAL;
+
+	if(resource.rlim_cur < (rlim_t)limit){
+		resource.rlim_cur = limit;
+		resource.rlim_max = limit;
+		if(setrlimit(RLIMIT_NOFILE, &resource) < 0)
+			throw VAS_ERR_INTERNAL;
+	}
 }
 
 ///////////////////////////////////////////////////////
