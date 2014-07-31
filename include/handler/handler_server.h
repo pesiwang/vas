@@ -9,7 +9,9 @@ public:
 	CHandler_Server(int fd, int timeout);
 	virtual ~CHandler_Server();
 
-	bool onRead(std::map<int, CBuffer*>& results);
+	virtual bool onRead();
+
+	virtual bool onData() = 0;
 };
 
 #endif

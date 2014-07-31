@@ -1,7 +1,6 @@
 #include <unistd.h>
 #include "handler.h"
 
-using namespace std;
 extern time_t g_timeNow;
 
 CHandler::CHandler(int fd, int timeout) : _fd(fd), _timeout(timeout)
@@ -23,7 +22,7 @@ CHandler::~CHandler()
 	}
 }
 
-bool CHandler::onRead(std::map<int, CBuffer*>& results)
+bool CHandler::onRead()
 {
 	this->_time = g_timeNow;
 	return true;
@@ -31,9 +30,11 @@ bool CHandler::onRead(std::map<int, CBuffer*>& results)
 
 bool CHandler::onWritten()
 {
+	this->_time = g_timeNow;
 	return true;
 }
 
 void CHandler::onClosed(VAS_REASON reason)
 {
+	this->_time = g_timeNow;
 }

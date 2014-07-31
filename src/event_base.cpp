@@ -44,11 +44,11 @@ void CEventBase::Helper::forkAsDaemon()
 
 void CEventBase::Helper::setResourceLimit(int limit)
 {
-	struct rlimit resource;
+	/*struct rlimit resource;
 	resource.rlim_cur = limit;
 	resource.rlim_max = limit;
 	if(setrlimit(RLIMIT_NOFILE, &resource) < 0)
-		throw VAS_ERR_INTERNAL;
+		throw VAS_ERR_INTERNAL;*/
 }
 
 ///////////////////////////////////////////////////////
@@ -91,11 +91,11 @@ void CEventBase::start()
 			if(events[i].events & EPOLLIN){
 				CHandler *handler = this->_doRead(events[i].data.fd);
 				if(handler){
-					map<int, CBuffer*> results;
-					if(!handler->onRead(results))
+					if(!handler->onRead())
 						this->_doClose(events[i].data.fd, VAS_REASON_SERVER_CLOSED);
-					else
-						this->_doBroadcast(results);
+
+					if(this->_swaps.size() > 0)
+						this->_doBroadcast();
 				}
 			}
 			if(events[i].events & EPOLLOUT){
@@ -103,6 +103,9 @@ void CEventBase::start()
 				if(handler){
 					if(!handler->onWritten())
 						this->_doClose(events[i].data.fd, VAS_REASON_SERVER_CLOSED);
+
+					if(this->_swaps.size() > 0)
+						this->_doBroadcast();
 				}
 			}
         }
@@ -136,6 +139,17 @@ void CEventBase::add(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
 	ev.data.fd = fd;
 	if(epoll_ctl(s_epollFd, EPOLL_CTL_ADD, fd, &ev) < 0)
 		throw VAS_ERR_INTERNAL;
+}
+
+void CEventBase::addSwap(int fd, CBuffer* buffer)
+{
+	if(NULL == this->_swaps[fd]){
+		this->_swaps[fd] = buffer;
+	}
+	else{
+		this->_swaps[fd]->append(buffer);
+		delete buffer;
+	}
 }
 
 /////////////////////////////////////////////////////////
@@ -253,9 +267,9 @@ void CEventBase::_doTimer()
 	}
 }
 
-void CEventBase::_doBroadcast(map<int, CBuffer*>& results)
+void CEventBase::_doBroadcast()
 {
-	for(map<int, CBuffer*>::iterator iter = results.begin(); iter != results.end(); ++iter){
+	for(map<int, CBuffer*>::iterator iter = this->_swaps.begin(); iter != this->_swaps.end(); ++iter){
 		int fd = iter->first;
 		CBuffer* buffer = iter->second;
 
@@ -276,6 +290,7 @@ void CEventBase::_doBroadcast(map<int, CBuffer*>& results)
 
 		delete buffer;
 	}
+	this->_swaps.clear();
 }
 
 void CEventBase::_doClose(int fd, VAS_REASON reason)

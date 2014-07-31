@@ -7,7 +7,7 @@
 #include "definition.h"
 #include "config.h"
 #include "event_base.h"
-#include "handler/handler_server.h"
+#include "handler/logic/handler_listener_echo.h"
 
 using namespace std;
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 		if((bind(listenerFd, (struct sockaddr *)&sin, sizeof(sin)) < 0) || (listen(listenerFd, SOMAXCONN) < 0))
 			throw VAS_ERR_INTERNAL;
 	
-		CEventBase::instance()->add(listenerFd, new CHandler_Server(listenerFd, 0), VAS_HANDLER_ROLE_LISTENER);
+		CEventBase::instance()->add(listenerFd, new CHandler_Listener_Echo(listenerFd), VAS_HANDLER_ROLE_LISTENER);
 		CEventBase::instance()->start();
 		CEventBase::release();
 		CConfig::release();

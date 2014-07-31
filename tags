@@ -4,10 +4,10 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-CBuffer	include/buffer.h	/^	CBuffer(size_t capacity = 1);$/;"	p	class:CBuffer	access:public	signature:(size_t capacity = 1)
+CBuffer	include/buffer.h	/^	CBuffer(size_t capacity = 1024);$/;"	p	class:CBuffer	access:public	signature:(size_t capacity = 1024)
 CBuffer	include/buffer.h	/^class CBuffer$/;"	c
 CBuffer	src/buffer.cpp	/^CBuffer::CBuffer(size_t capacity) : _size(0), _capacity(capacity)$/;"	f	class:CBuffer	signature:(size_t capacity)
-CBuffer::CBuffer	include/buffer.h	/^	CBuffer(size_t capacity = 1);$/;"	p	class:CBuffer	access:public	signature:(size_t capacity = 1)
+CBuffer::CBuffer	include/buffer.h	/^	CBuffer(size_t capacity = 1024);$/;"	p	class:CBuffer	access:public	signature:(size_t capacity = 1024)
 CBuffer::CBuffer	src/buffer.cpp	/^CBuffer::CBuffer(size_t capacity) : _size(0), _capacity(capacity)$/;"	f	class:CBuffer	signature:(size_t capacity)
 CBuffer::_capacity	include/buffer.h	/^	size_t _capacity;$/;"	m	class:CBuffer	access:private
 CBuffer::_cursor_beg_ptr	include/buffer.h	/^	char *_cursor_beg_ptr, *_cursor_end_ptr;$/;"	m	class:CBuffer	access:private
@@ -124,8 +124,8 @@ CEventBase::Helper::setResourceLimit	include/event_base.h	/^		static void setRes
 CEventBase::Helper::setResourceLimit	src/event_base.cpp	/^void CEventBase::Helper::setResourceLimit(int limit)$/;"	f	class:CEventBase::Helper	signature:(int limit)
 CEventBase::Helper::setReuseAddress	include/event_base.h	/^		static void setReuseAddress(int fd);$/;"	p	class:CEventBase::Helper	access:public	signature:(int fd)
 CEventBase::Helper::setReuseAddress	src/event_base.cpp	/^void CEventBase::Helper::setReuseAddress(int fd)$/;"	f	class:CEventBase::Helper	signature:(int fd)
-CEventBase::_doBroadcast	include/event_base.h	/^	void _doBroadcast(std::map<int, CBuffer*>& results);$/;"	p	class:CEventBase	access:protected	signature:(std::map<int, CBuffer*>& results)
-CEventBase::_doBroadcast	src/event_base.cpp	/^void CEventBase::_doBroadcast(map<int, CBuffer*>& results)$/;"	f	class:CEventBase	signature:(map<int, CBuffer*>& results)
+CEventBase::_doBroadcast	include/event_base.h	/^	void _doBroadcast();$/;"	p	class:CEventBase	access:protected	signature:()
+CEventBase::_doBroadcast	src/event_base.cpp	/^void CEventBase::_doBroadcast()$/;"	f	class:CEventBase	signature:()
 CEventBase::_doClose	include/event_base.h	/^	void _doClose(int fd, VAS_REASON reason);$/;"	p	class:CEventBase	access:protected	signature:(int fd, VAS_REASON reason)
 CEventBase::_doClose	src/event_base.cpp	/^void CEventBase::_doClose(int fd, VAS_REASON reason)$/;"	f	class:CEventBase	signature:(int fd, VAS_REASON reason)
 CEventBase::_doRead	include/event_base.h	/^	CHandler* _doRead(int fd);$/;"	p	class:CEventBase	access:protected	signature:(int fd)
@@ -138,8 +138,11 @@ CEventBase::_instance	include/event_base.h	/^	static CEventBase* _instance;$/;"	
 CEventBase::_instance	src/event_base.cpp	/^CEventBase* CEventBase::_instance = NULL;$/;"	m	class:CEventBase	file:
 CEventBase::_sockets	include/event_base.h	/^	std::map<int, CHandler*> _sockets;$/;"	m	class:CEventBase	access:protected
 CEventBase::_status	include/event_base.h	/^	volatile EventBaseStatus _status;$/;"	m	class:CEventBase	access:protected
+CEventBase::_swaps	include/event_base.h	/^	std::map<int, CBuffer*> _swaps;$/;"	m	class:CEventBase	access:protected
 CEventBase::add	include/event_base.h	/^	void add(int fd, CHandler* handler, VAS_HANDLER_ROLE role);$/;"	p	class:CEventBase	access:public	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
 CEventBase::add	src/event_base.cpp	/^void CEventBase::add(int fd, CHandler* handler, VAS_HANDLER_ROLE role)$/;"	f	class:CEventBase	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
+CEventBase::addSwap	include/event_base.h	/^	void addSwap(int fd, CBuffer* buffer);$/;"	p	class:CEventBase	access:public	signature:(int fd, CBuffer* buffer)
+CEventBase::addSwap	src/event_base.cpp	/^void CEventBase::addSwap(int fd, CBuffer* buffer)$/;"	f	class:CEventBase	signature:(int fd, CBuffer* buffer)
 CEventBase::instance	include/event_base.h	/^	static CEventBase* instance();$/;"	p	class:CEventBase	access:public	signature:()
 CEventBase::instance	src/event_base.cpp	/^CEventBase* CEventBase::instance()$/;"	f	class:CEventBase	signature:()
 CEventBase::release	include/event_base.h	/^	static void release();$/;"	p	class:CEventBase	access:public	signature:()
@@ -163,8 +166,8 @@ CHandler::_time	include/handler.h	/^	time_t _time;$/;"	m	class:CHandler	access:p
 CHandler::_timeout	include/handler.h	/^	int _timeout;$/;"	m	class:CHandler	access:protected
 CHandler::onClosed	include/handler.h	/^	virtual void onClosed(VAS_REASON reason);$/;"	p	class:CHandler	access:public	signature:(VAS_REASON reason)
 CHandler::onClosed	src/handler.cpp	/^void CHandler::onClosed(VAS_REASON reason)$/;"	f	class:CHandler	signature:(VAS_REASON reason)
-CHandler::onRead	include/handler.h	/^	virtual bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler	access:public	signature:(std::map<int, CBuffer*>& results)
-CHandler::onRead	src/handler.cpp	/^bool CHandler::onRead(std::map<int, CBuffer*>& results)$/;"	f	class:CHandler	signature:(std::map<int, CBuffer*>& results)
+CHandler::onRead	include/handler.h	/^	virtual bool onRead();$/;"	p	class:CHandler	access:public	signature:()
+CHandler::onRead	src/handler.cpp	/^bool CHandler::onRead()$/;"	f	class:CHandler	signature:()
 CHandler::onWritten	include/handler.h	/^	virtual bool onWritten();$/;"	p	class:CHandler	access:public	signature:()
 CHandler::onWritten	src/handler.cpp	/^bool CHandler::onWritten()$/;"	f	class:CHandler	signature:()
 CHandler::~CHandler	include/handler.h	/^	virtual ~CHandler();$/;"	p	class:CHandler	access:public	signature:()
@@ -174,19 +177,55 @@ CHandler_Client	include/handler/handler_client.h	/^class CHandler_Client : publi
 CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::CHandler_Client(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Client	signature:(int fd, int timeout)
 CHandler_Client::CHandler_Client	include/handler/handler_client.h	/^	CHandler_Client(int fd, int timeout);$/;"	p	class:CHandler_Client	access:public	signature:(int fd, int timeout)
 CHandler_Client::CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::CHandler_Client(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Client	signature:(int fd, int timeout)
-CHandler_Client::onRead	include/handler/handler_client.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Client	access:public	signature:(std::map<int, CBuffer*>& results)
-CHandler_Client::onRead	src/handler/handler_client.cpp	/^bool CHandler_Client::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Client	signature:(map<int, CBuffer*>& results)
+CHandler_Client::_isConnected	include/handler/handler_client.h	/^	bool _isConnected;$/;"	m	class:CHandler_Client	access:protected
+CHandler_Client::onClosed	include/handler/handler_client.h	/^	virtual void onClosed(VAS_REASON reason);$/;"	p	class:CHandler_Client	access:public	signature:(VAS_REASON reason)
+CHandler_Client::onClosed	src/handler/handler_client.cpp	/^void CHandler_Client::onClosed(VAS_REASON reason)$/;"	f	class:CHandler_Client	signature:(VAS_REASON reason)
+CHandler_Client::onConnected	include/handler/handler_client.h	/^	virtual bool onConnected() = 0;$/;"	p	class:CHandler_Client	access:public	signature:()
+CHandler_Client::onData	include/handler/handler_client.h	/^	virtual bool onData() = 0;$/;"	p	class:CHandler_Client	access:public	signature:()
+CHandler_Client::onRead	include/handler/handler_client.h	/^	virtual bool onRead();$/;"	p	class:CHandler_Client	access:public	signature:()
+CHandler_Client::onRead	src/handler/handler_client.cpp	/^bool CHandler_Client::onRead()$/;"	f	class:CHandler_Client	signature:()
+CHandler_Client::onWritten	include/handler/handler_client.h	/^	virtual bool onWritten();$/;"	p	class:CHandler_Client	access:public	signature:()
+CHandler_Client::onWritten	src/handler/handler_client.cpp	/^bool CHandler_Client::onWritten()$/;"	f	class:CHandler_Client	signature:()
 CHandler_Client::~CHandler_Client	include/handler/handler_client.h	/^	virtual ~CHandler_Client();$/;"	p	class:CHandler_Client	access:public	signature:()
 CHandler_Client::~CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::~CHandler_Client()$/;"	f	class:CHandler_Client	signature:()
+CHandler_Listener	include/handler/handler_listener.h	/^	CHandler_Listener(int fd);$/;"	p	class:CHandler_Listener	access:public	signature:(int fd)
+CHandler_Listener	include/handler/handler_listener.h	/^class CHandler_Listener : public CHandler$/;"	c	inherits:CHandler
+CHandler_Listener	src/handler/handler_listener.cpp	/^CHandler_Listener::CHandler_Listener(int fd) : CHandler(fd, 0)$/;"	f	class:CHandler_Listener	signature:(int fd)
+CHandler_Listener::CHandler_Listener	include/handler/handler_listener.h	/^	CHandler_Listener(int fd);$/;"	p	class:CHandler_Listener	access:public	signature:(int fd)
+CHandler_Listener::CHandler_Listener	src/handler/handler_listener.cpp	/^CHandler_Listener::CHandler_Listener(int fd) : CHandler(fd, 0)$/;"	f	class:CHandler_Listener	signature:(int fd)
+CHandler_Listener::onAccepted	include/handler/handler_listener.h	/^	virtual void onAccepted(int clientFd) = 0;$/;"	p	class:CHandler_Listener	access:public	signature:(int clientFd)
+CHandler_Listener::onRead	include/handler/handler_listener.h	/^	virtual bool onRead();$/;"	p	class:CHandler_Listener	access:public	signature:()
+CHandler_Listener::onRead	src/handler/handler_listener.cpp	/^bool CHandler_Listener::onRead()$/;"	f	class:CHandler_Listener	signature:()
+CHandler_Listener::~CHandler_Listener	include/handler/handler_listener.h	/^	virtual ~CHandler_Listener();$/;"	p	class:CHandler_Listener	access:public	signature:()
+CHandler_Listener::~CHandler_Listener	src/handler/handler_listener.cpp	/^CHandler_Listener::~CHandler_Listener()$/;"	f	class:CHandler_Listener	signature:()
+CHandler_Listener_Echo	include/handler/logic/handler_listener_echo.h	/^	CHandler_Listener_Echo(int fd);$/;"	p	class:CHandler_Listener_Echo	access:public	signature:(int fd)
+CHandler_Listener_Echo	include/handler/logic/handler_listener_echo.h	/^class CHandler_Listener_Echo : public CHandler_Listener$/;"	c	inherits:CHandler_Listener
+CHandler_Listener_Echo	src/handler/logic/handler_listener_echo.cpp	/^CHandler_Listener_Echo::CHandler_Listener_Echo(int fd) : CHandler_Listener(fd)$/;"	f	class:CHandler_Listener_Echo	signature:(int fd)
+CHandler_Listener_Echo::CHandler_Listener_Echo	include/handler/logic/handler_listener_echo.h	/^	CHandler_Listener_Echo(int fd);$/;"	p	class:CHandler_Listener_Echo	access:public	signature:(int fd)
+CHandler_Listener_Echo::CHandler_Listener_Echo	src/handler/logic/handler_listener_echo.cpp	/^CHandler_Listener_Echo::CHandler_Listener_Echo(int fd) : CHandler_Listener(fd)$/;"	f	class:CHandler_Listener_Echo	signature:(int fd)
+CHandler_Listener_Echo::onAccepted	include/handler/logic/handler_listener_echo.h	/^	void onAccepted(int clientFd);$/;"	p	class:CHandler_Listener_Echo	access:public	signature:(int clientFd)
+CHandler_Listener_Echo::onAccepted	src/handler/logic/handler_listener_echo.cpp	/^void CHandler_Listener_Echo::onAccepted(int clientFd)$/;"	f	class:CHandler_Listener_Echo	signature:(int clientFd)
+CHandler_Listener_Echo::~CHandler_Listener_Echo	include/handler/logic/handler_listener_echo.h	/^	virtual ~CHandler_Listener_Echo();$/;"	p	class:CHandler_Listener_Echo	access:public	signature:()
+CHandler_Listener_Echo::~CHandler_Listener_Echo	src/handler/logic/handler_listener_echo.cpp	/^CHandler_Listener_Echo::~CHandler_Listener_Echo()$/;"	f	class:CHandler_Listener_Echo	signature:()
 CHandler_Server	include/handler/handler_server.h	/^	CHandler_Server(int fd, int timeout);$/;"	p	class:CHandler_Server	access:public	signature:(int fd, int timeout)
 CHandler_Server	include/handler/handler_server.h	/^class CHandler_Server : public CHandler$/;"	c	inherits:CHandler
 CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::CHandler_Server(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Server	signature:(int fd, int timeout)
 CHandler_Server::CHandler_Server	include/handler/handler_server.h	/^	CHandler_Server(int fd, int timeout);$/;"	p	class:CHandler_Server	access:public	signature:(int fd, int timeout)
 CHandler_Server::CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::CHandler_Server(int fd, int timeout) : CHandler(fd, timeout)$/;"	f	class:CHandler_Server	signature:(int fd, int timeout)
-CHandler_Server::onRead	include/handler/handler_server.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Server	access:public	signature:(std::map<int, CBuffer*>& results)
-CHandler_Server::onRead	src/handler/handler_server.cpp	/^bool CHandler_Server::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Server	signature:(map<int, CBuffer*>& results)
+CHandler_Server::onData	include/handler/handler_server.h	/^	virtual bool onData() = 0;$/;"	p	class:CHandler_Server	access:public	signature:()
+CHandler_Server::onRead	include/handler/handler_server.h	/^	virtual bool onRead();$/;"	p	class:CHandler_Server	access:public	signature:()
+CHandler_Server::onRead	src/handler/handler_server.cpp	/^bool CHandler_Server::onRead()$/;"	f	class:CHandler_Server	signature:()
 CHandler_Server::~CHandler_Server	include/handler/handler_server.h	/^	virtual ~CHandler_Server();$/;"	p	class:CHandler_Server	access:public	signature:()
 CHandler_Server::~CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::~CHandler_Server()$/;"	f	class:CHandler_Server	signature:()
+CHandler_Server_Echo	include/handler/logic/handler_server_echo.h	/^	CHandler_Server_Echo(int fd, int timeout);$/;"	p	class:CHandler_Server_Echo	access:public	signature:(int fd, int timeout)
+CHandler_Server_Echo	include/handler/logic/handler_server_echo.h	/^class CHandler_Server_Echo : public CHandler_Server$/;"	c	inherits:CHandler_Server
+CHandler_Server_Echo	src/handler/logic/handler_server_echo.cpp	/^CHandler_Server_Echo::CHandler_Server_Echo(int fd, int timeout) : CHandler_Server(fd, timeout)$/;"	f	class:CHandler_Server_Echo	signature:(int fd, int timeout)
+CHandler_Server_Echo::CHandler_Server_Echo	include/handler/logic/handler_server_echo.h	/^	CHandler_Server_Echo(int fd, int timeout);$/;"	p	class:CHandler_Server_Echo	access:public	signature:(int fd, int timeout)
+CHandler_Server_Echo::CHandler_Server_Echo	src/handler/logic/handler_server_echo.cpp	/^CHandler_Server_Echo::CHandler_Server_Echo(int fd, int timeout) : CHandler_Server(fd, timeout)$/;"	f	class:CHandler_Server_Echo	signature:(int fd, int timeout)
+CHandler_Server_Echo::onData	include/handler/logic/handler_server_echo.h	/^	bool onData();$/;"	p	class:CHandler_Server_Echo	access:public	signature:()
+CHandler_Server_Echo::onData	src/handler/logic/handler_server_echo.cpp	/^bool CHandler_Server_Echo::onData()$/;"	f	class:CHandler_Server_Echo	signature:()
+CHandler_Server_Echo::~CHandler_Server_Echo	include/handler/logic/handler_server_echo.h	/^	virtual ~CHandler_Server_Echo();$/;"	p	class:CHandler_Server_Echo	access:public	signature:()
+CHandler_Server_Echo::~CHandler_Server_Echo	src/handler/logic/handler_server_echo.cpp	/^CHandler_Server_Echo::~CHandler_Server_Echo()$/;"	f	class:CHandler_Server_Echo	signature:()
 CXX	Makefile	/^CXX=g++$/;"	m
 CXXFLAG	Makefile	/^CXXFLAG=-g -Wall -DDEBUG$/;"	m
 EBS_RUNNING	include/event_base.h	/^	EBS_RUNNING,$/;"	e	enum:EventBaseStatus
@@ -211,6 +250,9 @@ _VAS_DEFINITION_H	include/definition.h	2;"	d
 _VAS_EVENT_BASE_H	include/event_base.h	2;"	d
 _VAS_HANDLER_CLIENT_H	include/handler/handler_client.h	2;"	d
 _VAS_HANDLER_H	include/handler.h	2;"	d
+_VAS_HANDLER_LISTENER_H	include/handler/handler_listener.h	2;"	d
+_VAS_HANDLER_LISTENER__ECHO_H	include/handler/logic/handler_listener_echo.h	2;"	d
+_VAS_HANDLER_SERVER_ECHO_H	include/handler/logic/handler_server_echo.h	2;"	d
 _VAS_HANDLER_SERVER_H	include/handler/handler_server.h	2;"	d
 _capacity	include/buffer.h	/^	size_t _capacity;$/;"	m	class:CBuffer	access:private
 _config_ini_handler	src/config.cpp	/^static void _config_ini_handler(void* context, const char* section, const char* name, const char* value){$/;"	f	file:	signature:(void* context, const char* section, const char* name, const char* value)
@@ -218,8 +260,8 @@ _cursor_beg_ptr	include/buffer.h	/^	char *_cursor_beg_ptr, *_cursor_end_ptr;$/;"
 _cursor_end_ptr	include/buffer.h	/^	char *_cursor_beg_ptr, *_cursor_end_ptr;$/;"	m	class:CBuffer	access:private
 _data_beg_ptr	include/buffer.h	/^	char *_data_beg_ptr, *_data_end_ptr;$/;"	m	class:CBuffer	access:private
 _data_end_ptr	include/buffer.h	/^	char *_data_beg_ptr, *_data_end_ptr;$/;"	m	class:CBuffer	access:private
-_doBroadcast	include/event_base.h	/^	void _doBroadcast(std::map<int, CBuffer*>& results);$/;"	p	class:CEventBase	access:protected	signature:(std::map<int, CBuffer*>& results)
-_doBroadcast	src/event_base.cpp	/^void CEventBase::_doBroadcast(map<int, CBuffer*>& results)$/;"	f	class:CEventBase	signature:(map<int, CBuffer*>& results)
+_doBroadcast	include/event_base.h	/^	void _doBroadcast();$/;"	p	class:CEventBase	access:protected	signature:()
+_doBroadcast	src/event_base.cpp	/^void CEventBase::_doBroadcast()$/;"	f	class:CEventBase	signature:()
 _doClose	include/event_base.h	/^	void _doClose(int fd, VAS_REASON reason);$/;"	p	class:CEventBase	access:protected	signature:(int fd, VAS_REASON reason)
 _doClose	src/event_base.cpp	/^void CEventBase::_doClose(int fd, VAS_REASON reason)$/;"	f	class:CEventBase	signature:(int fd, VAS_REASON reason)
 _doRead	include/event_base.h	/^	CHandler* _doRead(int fd);$/;"	p	class:CEventBase	access:protected	signature:(int fd)
@@ -237,6 +279,7 @@ _instance	include/config.h	/^	static CConfig* _instance;$/;"	m	class:CConfig	acc
 _instance	include/event_base.h	/^	static CEventBase* _instance;$/;"	m	class:CEventBase	access:protected
 _instance	src/config.cpp	/^CConfig* CConfig::_instance = NULL;$/;"	m	class:CConfig	file:
 _instance	src/event_base.cpp	/^CEventBase* CEventBase::_instance = NULL;$/;"	m	class:CEventBase	file:
+_isConnected	include/handler/handler_client.h	/^	bool _isConnected;$/;"	m	class:CHandler_Client	access:protected
 _log_printf	include/definition.h	7;"	d
 _lskip	src/config.cpp	/^static char* _lskip(const char* s){$/;"	f	file:	signature:(const char* s)
 _output	include/handler.h	/^	CBuffer *_input, *_output;$/;"	m	class:CHandler	access:protected
@@ -247,10 +290,13 @@ _size	include/buffer.h	/^	size_t _size;$/;"	m	class:CBuffer	access:private
 _sockets	include/event_base.h	/^	std::map<int, CHandler*> _sockets;$/;"	m	class:CEventBase	access:protected
 _status	include/event_base.h	/^	volatile EventBaseStatus _status;$/;"	m	class:CEventBase	access:protected
 _strncpy0	src/config.cpp	/^static inline char* _strncpy0(char* dest, const char* src, size_t size){$/;"	f	file:	signature:(char* dest, const char* src, size_t size)
+_swaps	include/event_base.h	/^	std::map<int, CBuffer*> _swaps;$/;"	m	class:CEventBase	access:protected
 _time	include/handler.h	/^	time_t _time;$/;"	m	class:CHandler	access:protected
 _timeout	include/handler.h	/^	int _timeout;$/;"	m	class:CHandler	access:protected
 add	include/event_base.h	/^	void add(int fd, CHandler* handler, VAS_HANDLER_ROLE role);$/;"	p	class:CEventBase	access:public	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
 add	src/event_base.cpp	/^void CEventBase::add(int fd, CHandler* handler, VAS_HANDLER_ROLE role)$/;"	f	class:CEventBase	signature:(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
+addSwap	include/event_base.h	/^	void addSwap(int fd, CBuffer* buffer);$/;"	p	class:CEventBase	access:public	signature:(int fd, CBuffer* buffer)
+addSwap	src/event_base.cpp	/^void CEventBase::addSwap(int fd, CBuffer* buffer)$/;"	f	class:CEventBase	signature:(int fd, CBuffer* buffer)
 append	include/buffer.h	/^	void append(CBuffer* buffer);$/;"	p	class:CBuffer	access:public	signature:(CBuffer* buffer)
 append	src/buffer.cpp	/^void CBuffer::append(CBuffer* buffer)$/;"	f	class:CBuffer	signature:(CBuffer* buffer)
 capacity	include/buffer.h	/^	size_t capacity() const { return _capacity; }$/;"	f	class:CBuffer	access:public	signature:() const
@@ -276,16 +322,30 @@ main	src/main.cpp	/^int main(int argc, char* argv[])$/;"	f	signature:(int argc, 
 maxClients	include/config.h	/^		int maxClients;$/;"	m	class:CConfig::CConfigServer	access:public
 maxIdleTime	include/config.h	/^		int maxIdleTime;$/;"	m	class:CConfig::CConfigServer	access:public
 network	include/config.h	/^	CConfigNetwork network;$/;"	m	class:CConfig	access:public
+onAccepted	include/handler/handler_listener.h	/^	virtual void onAccepted(int clientFd) = 0;$/;"	p	class:CHandler_Listener	access:public	signature:(int clientFd)
+onAccepted	include/handler/logic/handler_listener_echo.h	/^	void onAccepted(int clientFd);$/;"	p	class:CHandler_Listener_Echo	access:public	signature:(int clientFd)
+onAccepted	src/handler/logic/handler_listener_echo.cpp	/^void CHandler_Listener_Echo::onAccepted(int clientFd)$/;"	f	class:CHandler_Listener_Echo	signature:(int clientFd)
 onClosed	include/handler.h	/^	virtual void onClosed(VAS_REASON reason);$/;"	p	class:CHandler	access:public	signature:(VAS_REASON reason)
+onClosed	include/handler/handler_client.h	/^	virtual void onClosed(VAS_REASON reason);$/;"	p	class:CHandler_Client	access:public	signature:(VAS_REASON reason)
 onClosed	src/handler.cpp	/^void CHandler::onClosed(VAS_REASON reason)$/;"	f	class:CHandler	signature:(VAS_REASON reason)
-onRead	include/handler.h	/^	virtual bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler	access:public	signature:(std::map<int, CBuffer*>& results)
-onRead	include/handler/handler_client.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Client	access:public	signature:(std::map<int, CBuffer*>& results)
-onRead	include/handler/handler_server.h	/^	bool onRead(std::map<int, CBuffer*>& results);$/;"	p	class:CHandler_Server	access:public	signature:(std::map<int, CBuffer*>& results)
-onRead	src/handler.cpp	/^bool CHandler::onRead(std::map<int, CBuffer*>& results)$/;"	f	class:CHandler	signature:(std::map<int, CBuffer*>& results)
-onRead	src/handler/handler_client.cpp	/^bool CHandler_Client::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Client	signature:(map<int, CBuffer*>& results)
-onRead	src/handler/handler_server.cpp	/^bool CHandler_Server::onRead(map<int, CBuffer*>& results)$/;"	f	class:CHandler_Server	signature:(map<int, CBuffer*>& results)
+onClosed	src/handler/handler_client.cpp	/^void CHandler_Client::onClosed(VAS_REASON reason)$/;"	f	class:CHandler_Client	signature:(VAS_REASON reason)
+onConnected	include/handler/handler_client.h	/^	virtual bool onConnected() = 0;$/;"	p	class:CHandler_Client	access:public	signature:()
+onData	include/handler/handler_client.h	/^	virtual bool onData() = 0;$/;"	p	class:CHandler_Client	access:public	signature:()
+onData	include/handler/handler_server.h	/^	virtual bool onData() = 0;$/;"	p	class:CHandler_Server	access:public	signature:()
+onData	include/handler/logic/handler_server_echo.h	/^	bool onData();$/;"	p	class:CHandler_Server_Echo	access:public	signature:()
+onData	src/handler/logic/handler_server_echo.cpp	/^bool CHandler_Server_Echo::onData()$/;"	f	class:CHandler_Server_Echo	signature:()
+onRead	include/handler.h	/^	virtual bool onRead();$/;"	p	class:CHandler	access:public	signature:()
+onRead	include/handler/handler_client.h	/^	virtual bool onRead();$/;"	p	class:CHandler_Client	access:public	signature:()
+onRead	include/handler/handler_listener.h	/^	virtual bool onRead();$/;"	p	class:CHandler_Listener	access:public	signature:()
+onRead	include/handler/handler_server.h	/^	virtual bool onRead();$/;"	p	class:CHandler_Server	access:public	signature:()
+onRead	src/handler.cpp	/^bool CHandler::onRead()$/;"	f	class:CHandler	signature:()
+onRead	src/handler/handler_client.cpp	/^bool CHandler_Client::onRead()$/;"	f	class:CHandler_Client	signature:()
+onRead	src/handler/handler_listener.cpp	/^bool CHandler_Listener::onRead()$/;"	f	class:CHandler_Listener	signature:()
+onRead	src/handler/handler_server.cpp	/^bool CHandler_Server::onRead()$/;"	f	class:CHandler_Server	signature:()
 onWritten	include/handler.h	/^	virtual bool onWritten();$/;"	p	class:CHandler	access:public	signature:()
+onWritten	include/handler/handler_client.h	/^	virtual bool onWritten();$/;"	p	class:CHandler_Client	access:public	signature:()
 onWritten	src/handler.cpp	/^bool CHandler::onWritten()$/;"	f	class:CHandler	signature:()
+onWritten	src/handler/handler_client.cpp	/^bool CHandler_Client::onWritten()$/;"	f	class:CHandler_Client	signature:()
 peek	include/buffer.h	/^	size_t peek(char* data, size_t count) const;$/;"	p	class:CBuffer	access:public	signature:(char* data, size_t count) const
 peek	src/buffer.cpp	/^size_t CBuffer::peek(char* data, size_t count) const$/;"	f	class:CBuffer	signature:(char* data, size_t count) const
 peekByte	include/buffer.h	/^	char peekByte() const;$/;"	p	class:CBuffer	access:public	signature:() const
@@ -372,5 +432,11 @@ writeUnsignedShort	src/buffer.cpp	/^void CBuffer::writeUnsignedShort(const unsig
 ~CHandler	src/handler.cpp	/^CHandler::~CHandler()$/;"	f	class:CHandler	signature:()
 ~CHandler_Client	include/handler/handler_client.h	/^	virtual ~CHandler_Client();$/;"	p	class:CHandler_Client	access:public	signature:()
 ~CHandler_Client	src/handler/handler_client.cpp	/^CHandler_Client::~CHandler_Client()$/;"	f	class:CHandler_Client	signature:()
+~CHandler_Listener	include/handler/handler_listener.h	/^	virtual ~CHandler_Listener();$/;"	p	class:CHandler_Listener	access:public	signature:()
+~CHandler_Listener	src/handler/handler_listener.cpp	/^CHandler_Listener::~CHandler_Listener()$/;"	f	class:CHandler_Listener	signature:()
+~CHandler_Listener_Echo	include/handler/logic/handler_listener_echo.h	/^	virtual ~CHandler_Listener_Echo();$/;"	p	class:CHandler_Listener_Echo	access:public	signature:()
+~CHandler_Listener_Echo	src/handler/logic/handler_listener_echo.cpp	/^CHandler_Listener_Echo::~CHandler_Listener_Echo()$/;"	f	class:CHandler_Listener_Echo	signature:()
 ~CHandler_Server	include/handler/handler_server.h	/^	virtual ~CHandler_Server();$/;"	p	class:CHandler_Server	access:public	signature:()
 ~CHandler_Server	src/handler/handler_server.cpp	/^CHandler_Server::~CHandler_Server()$/;"	f	class:CHandler_Server	signature:()
+~CHandler_Server_Echo	include/handler/logic/handler_server_echo.h	/^	virtual ~CHandler_Server_Echo();$/;"	p	class:CHandler_Server_Echo	access:public	signature:()
+~CHandler_Server_Echo	src/handler/logic/handler_server_echo.cpp	/^CHandler_Server_Echo::~CHandler_Server_Echo()$/;"	f	class:CHandler_Server_Echo	signature:()

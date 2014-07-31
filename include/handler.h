@@ -1,7 +1,6 @@
 #ifndef _VAS_HANDLER_H
 #define _VAS_HANDLER_H
 
-#include <map>
 #include <time.h>
 #include "buffer.h"
 #include "definition.h"
@@ -15,7 +14,7 @@ public:
 	CHandler(int fd, int timeout);
 	virtual ~CHandler();
 
-	virtual bool onRead(std::map<int, CBuffer*>& results);
+	virtual bool onRead();
 	virtual bool onWritten();
 	virtual void onClosed(VAS_REASON reason);
 

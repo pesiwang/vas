@@ -31,6 +31,7 @@ public:
 	void start();
 	void stop();
 	void add(int fd, CHandler* handler, VAS_HANDLER_ROLE role);
+	void addSwap(int fd, CBuffer* buffer);
 
 protected:
 	CEventBase();
@@ -40,12 +41,13 @@ protected:
 	CHandler* _doWrite(int fd);
 	void _doClose(int fd, VAS_REASON reason);
 	void _doTimer();
-	void _doBroadcast(std::map<int, CBuffer*>& results);
+	void _doBroadcast();
 
 protected:
 	static CEventBase* _instance;
 	volatile EventBaseStatus _status;
 	std::map<int, CHandler*> _sockets;
+	std::map<int, CBuffer*> _swaps;
 };
 
 #endif

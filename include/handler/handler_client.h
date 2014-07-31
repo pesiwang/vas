@@ -9,7 +9,15 @@ public:
 	CHandler_Client(int fd, int timeout);
 	virtual ~CHandler_Client();
 
-	bool onRead(std::map<int, CBuffer*>& results);
+	virtual bool onRead();
+	virtual bool onWritten();
+	virtual void onClosed(VAS_REASON reason);
+
+	virtual bool onConnected() = 0;
+	virtual bool onData() = 0;
+
+protected:
+	bool _isConnected;
 };
 
 #endif

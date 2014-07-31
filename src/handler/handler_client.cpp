@@ -1,8 +1,4 @@
-#include "handler/handler_server.h"
 #include "handler/handler_client.h"
-#include "event_base.h"
-
-using namespace std;
 
 CHandler_Client::CHandler_Client(int fd, int timeout) : CHandler(fd, timeout)
 {
@@ -12,15 +8,30 @@ CHandler_Client::~CHandler_Client()
 {
 }
 
-bool CHandler_Client::onRead(map<int, CBuffer*>& results)
+bool CHandler_Client::onRead()
 {
-	if(!CHandler::onRead(results))
+	if(!CHandler::onRead())
 		return false;
 
-	CBuffer* buffer = new CBuffer();
-	buffer->append(this->_input);
-	this->_input->shrink(this->_input->size());
-
-	results[this->_fd] = buffer;
+	if(this->_input->size() > 0)
+		return this->onData();
 	return true;
+}
+
+bool CHandler_Client::onWritten()
+{
+	if(!CHandler::onWritten())
+		return false;
+
+	if(!this->_isConnected){
+		this->_isConnected = true;
+		this->onConnected();
+	}
+	return true;
+}
+
+void CHandler_Client::onClosed(VAS_REASON reason)
+{
+	this->_fd = -1;
+	this->_isConnected = false;
 }
