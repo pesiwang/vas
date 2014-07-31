@@ -1,9 +1,6 @@
 #include <iostream>
 #include <string.h>
 #include <signal.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include "definition.h"
 #include "config.h"
 #include "event_base.h"
@@ -36,20 +33,18 @@ int main(int argc, char* argv[])
 		if(CConfig::instance()->server.daemonize)
 			CEventBase::Helper::forkAsDaemon();
 
-		struct sockaddr_in sin;
-		memset(&sin, 0, sizeof(sin));
-		sin.sin_addr.s_addr = inet_addr(CConfig::instance()->network.host);
-		sin.sin_family = AF_INET;
-		sin.sin_port = htons(CConfig::instance()->network.port);
-		int listenerFd = socket(AF_INET, SOCK_STREAM, 0);
+		int listenerFd = CEventBase::Helper::createServerSocket(CConfig::instance()->network.host, CConfig::instance()->network.port);
 		if(listenerFd < 0)
 			throw VAS_ERR_INTERNAL;
 
-		CEventBase::Helper::setReuseAddress(listenerFd);
-		if((bind(listenerFd, (struct sockaddr *)&sin, sizeof(sin)) < 0) || (listen(listenerFd, SOMAXCONN) < 0))
-			throw VAS_ERR_INTERNAL;
-	
 		CEventBase::instance()->add(listenerFd, new CHandler_Listener_Echo(listenerFd), VAS_HANDLER_ROLE_LISTENER);
+		
+		int clientFd = CEventBase::Helper::createClientSocket("localhost", 80);
+		if(clientFd < 0)
+			throw VAS_ERR_INTERNAL;
+
+		CEventBase::instance()->add(clientFd, new CHandler_Listener_Echo
+
 		CEventBase::instance()->start();
 		CEventBase::release();
 		CConfig::release();

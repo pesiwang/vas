@@ -8,6 +8,8 @@
 #include <sys/epoll.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "definition.h"
 #include "event_base.h"
 
@@ -18,6 +20,49 @@ time_t g_timeNow = time(NULL);
 time_t g_timeLast = g_timeNow;
 
 CEventBase* CEventBase::_instance = NULL;
+
+int CEventBase::Helper::createServerSocket(const char* bindAddr, unsigned short bindPort)
+{
+	struct sockaddr_in sin;
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_addr.s_addr = inet_addr(bindAddr);
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(bindPort);
+	int listenerFd = socket(AF_INET, SOCK_STREAM, 0);
+	if(listenerFd < 0)
+		return -1;
+
+	CEventBase::Helper::setReuseAddress(listenerFd);
+	CEventBase::Helper::setNonBlocking(listenerFd);
+
+	if((bind(listenerFd, (struct sockaddr *)&sin, sizeof(sin)) < 0) || (listen(listenerFd, SOMAXCONN) < 0)){
+		close(listenerFd);
+		return -1;
+	}
+	return listenerFd;
+}
+
+int CEventBase::Helper::createClientSocket(const char* serverAddr, unsigned short serverPort)
+{
+	int clientFd = socket(AF_INET, SOCK_STREAM, 0);
+	if(clientFd < 0)
+		return -1;
+
+	CEventBase::Helper::setNonBlocking(clientFd);
+
+	struct sockaddr_in sin;
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_addr.s_addr = inet_addr(serverAddr);
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(serverPort);
+
+	int res = connect(clientFd, (struct sockaddr *)&sin, sizeof(sin));
+	if ((res < 0) && (errno != EINPROGRESS)){
+		close(clientFd);
+		return -1;
+	}
+	return clientFd;
+}
 
 void CEventBase::Helper::setNonBlocking(int fd)
 {
@@ -124,7 +169,6 @@ void CEventBase::add(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
 	if(this->_sockets.end() != iter)
 		throw VAS_ERR_INTERNAL;
 
-	Helper::setNonBlocking(fd);
 	this->_sockets[fd] = handler;
 
 	struct epoll_event ev = {0};
