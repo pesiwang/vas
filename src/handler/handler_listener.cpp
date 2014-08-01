@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "handler/handler_listener.h"
+#include "helper.h"
 #include "event_base.h"
 
 CHandler_Listener::CHandler_Listener(int fd) : CHandler(fd, 0)
@@ -25,10 +26,8 @@ bool CHandler_Listener::onRead()
 	if(!CHandler::onRead())
 		return false;
 
-	int clientFd, sin_len = sizeof(struct sockaddr);
-    struct sockaddr_in sin;
-    while((clientFd = accept(this->_fd, (struct sockaddr *)&sin, (socklen_t *)&sin_len)) >= 0){
-		CEventBase::Helper::setNonBlocking(clientFd);
+	int clientFd;
+	while((clientFd = CHelper::Socket::accept(this->_fd)) >= 0){
 		this->onAccepted(clientFd);
 	}
 	return true;

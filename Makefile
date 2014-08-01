@@ -5,6 +5,7 @@ CXXFLAG=-g -Wall -DDEBUG
 all:
 	mkdir -p ./lib;
 	$(CXX) $(INC) $(CXXFLAG) -c ./src/buffer.cpp -o ./lib/buffer.o
+	$(CXX) $(INC) $(CXXFLAG) -c ./src/helper.cpp -o ./lib/helper.o
 	$(CXX) $(INC) $(CXXFLAG) -c ./src/config.cpp -o ./lib/config.o
 	$(CXX) $(INC) $(CXXFLAG) -c ./src/event_base.cpp -o ./lib/event_base.o
 	$(CXX) $(INC) $(CXXFLAG) -c ./src/handler.cpp -o ./lib/handler.o

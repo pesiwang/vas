@@ -4,6 +4,7 @@
 #include "definition.h"
 #include "config.h"
 #include "event_base.h"
+#include "helper.h"
 #include "handler/logic/handler_listener_echo.h"
 
 using namespace std;
@@ -29,21 +30,23 @@ int main(int argc, char* argv[])
 	    if(sigemptyset(&sa.sa_mask) == -1 || sigaction(SIGINT, &sa, NULL) == -1)
     	    throw VAS_ERR_INTERNAL;
 
-		CEventBase::Helper::setResourceLimit(CConfig::instance()->server.maxClients);
-		if(CConfig::instance()->server.daemonize)
-			CEventBase::Helper::forkAsDaemon();
+		if(!CHelper::Application::setFileLimit(CConfig::instance()->server.maxClients))
+			throw VAS_ERR_INTERNAL;
 
-		int listenerFd = CEventBase::Helper::createServerSocket(CConfig::instance()->network.host, CConfig::instance()->network.port);
+		if(CConfig::instance()->server.daemonize)
+			CHelper::Application::daemonize();
+
+		int listenerFd = CHelper::Socket::listen(CConfig::instance()->network.host, CConfig::instance()->network.port);
 		if(listenerFd < 0)
 			throw VAS_ERR_INTERNAL;
 
 		CEventBase::instance()->add(listenerFd, new CHandler_Listener_Echo(listenerFd), VAS_HANDLER_ROLE_LISTENER);
 		
-		int clientFd = CEventBase::Helper::createClientSocket("localhost", 80);
+		int clientFd = CHelper::Socket::connect("localhost", 80);
 		if(clientFd < 0)
 			throw VAS_ERR_INTERNAL;
 
-		CEventBase::instance()->add(clientFd, new CHandler_Listener_Echo
+		CEventBase::instance()->add(clientFd, new CHandler_Listener_Echo(clientFd), VAS_HANDLER_ROLE_NORMAL);
 
 		CEventBase::instance()->start();
 		CEventBase::release();

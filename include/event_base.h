@@ -15,18 +15,6 @@ enum EventBaseStatus
 class CEventBase
 {
 public:
-	class Helper
-	{
-	public:
-		static int createServerSocket(const char* bindAddr, unsigned short bindPort);
-		static int createClientSocket(const char* serverAddr, unsigned short serverPort);
-		static void setNonBlocking(int fd);
-		static void setReuseAddress(int fd);
-		static void forkAsDaemon();
-		static void setResourceLimit(int limit);
-	};
-
-public:
 	static CEventBase* instance();
 	static void release();
 
