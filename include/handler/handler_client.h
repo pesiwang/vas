@@ -9,12 +9,13 @@ public:
 	CHandler_Client(int fd, int timeout);
 	virtual ~CHandler_Client();
 
-	virtual bool onRead();
-	virtual bool onWritten();
-	virtual void onClosed(VAS_REASON reason);
+	virtual void onRead();
+	virtual void onWritten();
 
-	virtual bool onConnected() = 0;
-	virtual bool onData() = 0;
+protected:
+	virtual void _onConnected() = 0;
+	virtual void _onData() = 0;
+	virtual void _onClosed(VAS_REASON reason);
 
 protected:
 	bool _isConnected;

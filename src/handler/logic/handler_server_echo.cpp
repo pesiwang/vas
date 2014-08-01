@@ -9,12 +9,22 @@ CHandler_Server_Echo::~CHandler_Server_Echo()
 {
 }
 
-bool CHandler_Server_Echo::onData()
+///////////////////////////////////////////
+
+void CHandler_Server_Echo::_onData()
 {
 	CBuffer *buffer = new CBuffer(this->_input->size());
 	buffer->append(this->_input);
 	this->_input->shrink(this->_input->size());
 
-	CEventBase::instance()->addSwap(this->_fd, buffer);
-	return true;
+	CEventBase::JOB job;
+	job.cmd = VAS_COMMAND_ADD_BUFFER;
+	job.fd = this->_fd;
+	job.payload.buffer = buffer;
+	CEventBase::instance()->add(job);
+}
+
+void CHandler_Server_Echo::_onClosed(VAS_REASON reason)
+{
+	log_debug("CHandler_Server_Echo onClosed, fd = %d", this->_fd);
 }

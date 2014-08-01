@@ -9,13 +9,10 @@ CHandler_Server::~CHandler_Server()
 {
 }
 
-bool CHandler_Server::onRead()
+void CHandler_Server::onRead()
 {
-	if(!CHandler::onRead())
-		return false;
+	CHandler::onRead();
 
 	if(this->_input->size() > 0)
-		return this->onData();
-
-	return true;
+		this->_onData();
 }

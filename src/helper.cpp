@@ -67,6 +67,58 @@ int CHelper::Socket::accept(int listenerFd)
 	return clientFd;
 }
 
+bool CHelper::Socket::read(int fd, CBuffer* buffer)
+{
+	char buf[1024];
+	int curr_read = 0;
+	int total_read = 0;
+	while((curr_read = ::read(fd, buf, 1024)) > 0){
+		buffer->write(buf, curr_read);
+		total_read += curr_read;
+	}
+
+	if((curr_read == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
+		return true;
+
+	if((curr_read == -1) || (total_read == 0)){
+		return false;
+	}
+	return true;
+}
+
+bool CHelper::Socket::write(int fd, CBuffer* buffer)
+{
+	bool blocked = false;
+	char buf[1024];
+	int curr_read = 0;
+	while(!blocked && ((curr_read = buffer->peek(buf, 1024)) > 0)){
+		int n_written = 0;
+		int n_left = curr_read;
+		while(n_left > 0){
+			int written = ::write(fd, buf + n_written, n_left);
+			if (written < n_left){
+				if((written == -1) && (errno != EAGAIN) && (errno != EWOULDBLOCK))
+					return false;
+
+				if(written == -1){
+					blocked = true;
+					break;
+				}
+			}
+
+			if(written > 0){
+				n_written += written;
+				n_left -= written;
+			}
+		}
+
+		if(n_written > 0)
+			buffer->shrink(n_written);
+	}
+
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////
 
 void CHelper::Application::daemonize()
@@ -86,7 +138,7 @@ bool CHelper::Application::setFileLimit(int limit)
 	struct rlimit resource;
 	resource.rlim_cur = limit;
 	resource.rlim_max = limit;
-	if(setrlimit(RLIMIT_NOFILE, &resource) < 0)
-		return false;
+//	if(setrlimit(RLIMIT_NOFILE, &resource) < 0)
+//		return false;
 	return true;
 }

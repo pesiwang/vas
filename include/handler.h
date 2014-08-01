@@ -14,9 +14,11 @@ public:
 	CHandler(int fd, int timeout);
 	virtual ~CHandler();
 
-	virtual bool onRead();
-	virtual bool onWritten();
-	virtual void onClosed(VAS_REASON reason);
+	virtual void onRead();
+	virtual void onWritten();
+
+protected:
+	virtual void _onClosed(VAS_REASON reason) = 0;
 
 protected:
 	int _fd;

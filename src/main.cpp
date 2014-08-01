@@ -40,13 +40,20 @@ int main(int argc, char* argv[])
 		if(listenerFd < 0)
 			throw VAS_ERR_INTERNAL;
 
-		CEventBase::instance()->add(listenerFd, new CHandler_Listener_Echo(listenerFd), VAS_HANDLER_ROLE_LISTENER);
-		
+		CEventBase::JOB job;
+		job.cmd = VAS_COMMAND_ADD_FD;
+		job.fd = listenerFd;
+		job.payload.handler = new CHandler_Listener_Echo(listenerFd);
+
+		CEventBase::instance()->add(job);
+		CEventBase::instance()->commit();
+	/*	
 		int clientFd = CHelper::Socket::connect("localhost", 80);
 		if(clientFd < 0)
 			throw VAS_ERR_INTERNAL;
 
 		CEventBase::instance()->add(clientFd, new CHandler_Listener_Echo(clientFd), VAS_HANDLER_ROLE_NORMAL);
+*/
 
 		CEventBase::instance()->start();
 		CEventBase::release();

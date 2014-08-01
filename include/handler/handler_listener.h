@@ -9,8 +9,10 @@ public:
 	CHandler_Listener(int fd);
 	virtual ~CHandler_Listener();
 
-	virtual bool onRead();
-	virtual void onAccepted(int clientFd) = 0;
+	virtual void onRead();
+
+protected:
+	virtual void _onAccepted(int clientFd) = 0;
 };
 
 #endif

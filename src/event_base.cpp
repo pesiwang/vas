@@ -12,6 +12,8 @@
 #include <arpa/inet.h>
 #include "definition.h"
 #include "event_base.h"
+#include "handler/handler_listener.h"
+#include "helper.h"
 
 using namespace std;
 
@@ -47,7 +49,7 @@ void CEventBase::start()
 	while(EBS_RUNNING == this->_status){
 		g_timeNow = time(NULL);
 		if(g_timeNow >= (g_timeLast + 1)){
-			this->_doTimer();
+			this->_timer();
 			g_timeLast = g_timeNow;
 		}
 
@@ -57,24 +59,27 @@ void CEventBase::start()
 
 		for(int i = 0; i < nfds; ++i){
 			if(events[i].events & EPOLLIN){
-				CHandler *handler = this->_doRead(events[i].data.fd);
-				if(handler){
-					if(!handler->onRead())
-						this->_doClose(events[i].data.fd, VAS_REASON_SERVER_CLOSED);
+				map<int, CHandler*>::iterator iter = this->_sockets.find(events[i].data.fd);
+				CHandler *handler = (this->_sockets.end() == iter) ? NULL : iter->second;
+				if((NULL != handler) && (NULL != handler->_input))
+					if(!CHelper::Socket::read(handler->_fd, handler->_input))
+						this->_close(events[i].data.fd, handler, VAS_REASON_SERVER_CLOSED);
 
-					if(this->_swaps.size() > 0)
-						this->_doBroadcast();
-				}
+				if(NULL != handler)
+					handler->onRead();
+
+				if(this->_jobs.size() > 0)
+					this->commit();
 			}
 			if(events[i].events & EPOLLOUT){
-				CHandler* handler = this->_doWrite(events[i].data.fd);
-				if(handler){
-					if(!handler->onWritten())
-						this->_doClose(events[i].data.fd, VAS_REASON_SERVER_CLOSED);
+				map<int, CHandler*>::iterator iter = this->_sockets.find(events[i].data.fd);
+				CHandler *handler = (this->_sockets.end() == iter) ? NULL : iter->second;
+				if((NULL != handler) && (NULL != handler->_output) && (handler->_output->size() > 0))
+					if(!CHelper::Socket::write(handler->_fd, handler->_output))
+						this->_close(events[i].data.fd, handler, VAS_REASON_SERVER_CLOSED);
 
-					if(this->_swaps.size() > 0)
-						this->_doBroadcast();
-				}
+				if(NULL != handler)
+					handler->onWritten();
 			}
         }
     }
@@ -86,36 +91,27 @@ void CEventBase::stop()
 	this->_status = EBS_STOPPING;
 }
 
-void CEventBase::add(int fd, CHandler* handler, VAS_HANDLER_ROLE role)
+void CEventBase::add(const CEventBase::JOB& job)
 {
-	map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
-	if(this->_sockets.end() != iter)
-		throw VAS_ERR_INTERNAL;
-
-	this->_sockets[fd] = handler;
-
-	struct epoll_event ev = {0};
-	ev.events = EPOLLET;
-	if(role == VAS_HANDLER_ROLE_LISTENER){
-		ev.events = EPOLLIN|EPOLLET;
-	}
-	else{
-		ev.events = EPOLLIN|EPOLLOUT|EPOLLET;
-	}
-	
-	ev.data.fd = fd;
-	if(epoll_ctl(s_epollFd, EPOLL_CTL_ADD, fd, &ev) < 0)
-		throw VAS_ERR_INTERNAL;
+	this->_jobs.push(job);
 }
 
-void CEventBase::addSwap(int fd, CBuffer* buffer)
+void CEventBase::commit()
 {
-	if(NULL == this->_swaps[fd]){
-		this->_swaps[fd] = buffer;
-	}
-	else{
-		this->_swaps[fd]->append(buffer);
-		delete buffer;
+	while(!this->_jobs.empty()){
+		CEventBase::JOB job = this->_jobs.front();
+		this->_jobs.pop();
+		switch(job.cmd){
+			case VAS_COMMAND_ADD_FD:
+				this->_add(job.fd, job.payload.handler);
+				break;
+			case VAS_COMMAND_DEL_FD:
+				this->_close(job.fd, job.payload.handler, VAS_REASON_SERVER_CLOSED);
+				break;
+			case VAS_COMMAND_ADD_BUFFER:
+				this->_addBuffer(job.fd, job.payload.buffer);
+				break;
+		}
 	}
 }
 
@@ -140,84 +136,7 @@ CEventBase::~CEventBase()
 	}
 }
 
-CHandler* CEventBase::_doRead(int fd)
-{
-	map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
-	if(iter == this->_sockets.end()){
-		log_error("no handler found for socket %d [_doRead]", fd);
-		return NULL;
-	}
-
-	CHandler* handler = iter->second;
-	CBuffer* buffer = handler->_input;
-	if(NULL == buffer)
-		return handler;
-
-	char buf[1024];
-    int curr_read = 0;
-    int total_read = 0;
-    while((curr_read = read(fd, buf, 1024)) > 0){
-		buffer->write(buf, curr_read);
-        total_read += curr_read;
-    }
-
-	if((curr_read == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
-		return handler;
-
-    if((curr_read == -1) || (total_read == 0)){
-		this->_doClose(fd, VAS_REASON_CLIENT_CLOSED);
-        return NULL;
-    }
-	return handler;
-}
-
-CHandler* CEventBase::_doWrite(int fd)
-{
-	map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
-	if(iter == this->_sockets.end()){
-		log_error("no handler found for socket %d [_doWrite]", fd);
-		return NULL;
-	}
-
-	CHandler* handler = iter->second;
-	CBuffer* buffer = handler->_output;
-	if((NULL == buffer) || (buffer->size() == 0))
-		return handler;
-
-	bool blocked = false;
-	char buf[1024];
-	int curr_read = 0;
-	while(!blocked && ((curr_read = buffer->peek(buf, 1024)) > 0)){
-		int n_written = 0;
-		int n_left = curr_read;
-		while(n_left > 0){
-			int written = write(fd, buf + n_written, n_left);
-			if (written < n_left){
-				if((written == -1) && (errno != EAGAIN) && (errno != EWOULDBLOCK)){
-					this->_doClose(fd, VAS_REASON_CLIENT_CLOSED);
-					return handler;
-				}
-               	
-				if(written == -1){
-					blocked = true;
-					break;
-				}
-			}
-
-			if(written > 0){
-				n_written += written;
-				n_left -= written;
-			}
-       	}
-
-		if(n_written > 0)
-			buffer->shrink(n_written);
-	}
-
-	return handler;
-}
-
-void CEventBase::_doTimer()
+void CEventBase::_timer()
 {
 	map<int, CHandler*>::iterator iter = this->_sockets.begin();
 	while(iter != this->_sockets.end()){
@@ -226,7 +145,8 @@ void CEventBase::_doTimer()
 			std::map<int, CHandler*>::iterator iterToErase = iter;
 			++iter;
 
-			this->_doClose(iterToErase->first, VAS_REASON_TIMEOUT);
+			CHandler* handler = iterToErase->second;
+			this->_close(iterToErase->first, handler, VAS_REASON_TIMEOUT);
 		}
 		else{
 			++iter;
@@ -234,43 +154,63 @@ void CEventBase::_doTimer()
 	}
 }
 
-void CEventBase::_doBroadcast()
+void CEventBase::_add(int fd, CHandler* handler)
 {
-	for(map<int, CBuffer*>::iterator iter = this->_swaps.begin(); iter != this->_swaps.end(); ++iter){
-		int fd = iter->first;
-		CBuffer* buffer = iter->second;
-
-		map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
-		if(this->_sockets.end() == iter){
-			log_error("socket %d not exists in _doBroadcast", fd);
-			delete buffer;
-			continue;
-		}
-
-		CHandler* handler = iter->second;
-		handler->_output->append(buffer);
-
-		handler = this->_doWrite(fd);
-		if(handler)
-			if(!handler->onWritten())
-				this->_doClose(fd, VAS_REASON_SERVER_CLOSED);
-
-		delete buffer;
-	}
-	this->_swaps.clear();
-}
-
-void CEventBase::_doClose(int fd, VAS_REASON reason)
-{
-	if(this->_sockets.find(fd) == this->_sockets.end()){
-		log_error("no handler found for socket %d [_doClose]", fd);
+	map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
+	if(this->_sockets.end() != iter){
+		log_error("cannot add fd %d when its already there", fd);
 		return;
 	}
 
-	CHandler* handler = this->_sockets[fd];
+	this->_sockets[fd] = handler;
 
-	close(fd);
-	handler->onClosed(reason);
+	struct epoll_event ev = {0};
+	ev.events = EPOLLET;
+
+	if(NULL != dynamic_cast<CHandler_Listener*>(handler)){
+		ev.events = EPOLLIN|EPOLLET;
+	}
+	else{
+		ev.events = EPOLLIN|EPOLLOUT|EPOLLET;
+	}
+	
+	ev.data.fd = fd;
+	if(epoll_ctl(s_epollFd, EPOLL_CTL_ADD, fd, &ev) < 0)
+		log_error("failed to add fd %d to epoll", fd);
+}
+
+void CEventBase::_close(int fd, CHandler*& handler, VAS_REASON reason)
+{
+	if(this->_sockets.find(fd) == this->_sockets.end()){
+		log_error("no handler found for socket %d [_close]", fd);
+		return;
+	}
+
+	::close(fd);
+	handler->_onClosed(reason);
 	delete handler;
+	handler = NULL;
 	this->_sockets.erase(fd);
 }
+
+void CEventBase::_addBuffer(int fd, CBuffer* buffer)
+{
+	map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
+	if(this->_sockets.end() == iter){
+		log_error("no handler found for socket %d [_addBuffer]", fd);
+		delete buffer;
+		return;
+	}
+
+	CHandler* handler = iter->second;
+	if(NULL != handler->_output){
+		handler->_output->append(buffer);
+		if(!CHelper::Socket::write(fd, handler->_output))
+			this->_close(fd, handler, VAS_REASON_SERVER_CLOSED);
+	}
+	if(NULL != handler)
+		handler->onWritten();
+	
+	delete buffer;
+}
+

@@ -2,6 +2,7 @@
 #define _VAS_EVENT_BASE_H
 
 #include <map>
+#include <queue>
 #include "definition.h"
 #include "handler.h"
 
@@ -15,29 +16,39 @@ enum EventBaseStatus
 class CEventBase
 {
 public:
+	struct JOB
+	{
+		VAS_COMMAND cmd;
+		int fd;
+		union{
+			CBuffer* buffer;
+			CHandler* handler;
+		}payload;
+	};
+public:
 	static CEventBase* instance();
 	static void release();
 
 	void start();
 	void stop();
-	void add(int fd, CHandler* handler, VAS_HANDLER_ROLE role);
-	void addSwap(int fd, CBuffer* buffer);
+	void add(const JOB& job);
+	void commit();
 
 protected:
 	CEventBase();
 	virtual ~CEventBase();
 
-	CHandler* _doRead(int fd);
-	CHandler* _doWrite(int fd);
-	void _doClose(int fd, VAS_REASON reason);
-	void _doTimer();
-	void _doBroadcast();
+	void _add(int fd, CHandler* handler);
+	void _close(int fd, CHandler*& handler, VAS_REASON reason);
+	void _addBuffer(int fd, CBuffer* buffer);
+	void _timer();
 
 protected:
 	static CEventBase* _instance;
 	volatile EventBaseStatus _status;
+
 	std::map<int, CHandler*> _sockets;
-	std::map<int, CBuffer*> _swaps;
+	std::queue<JOB> _jobs;
 };
 
 #endif

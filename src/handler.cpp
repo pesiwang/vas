@@ -22,19 +22,12 @@ CHandler::~CHandler()
 	}
 }
 
-bool CHandler::onRead()
+void CHandler::onRead()
 {
 	this->_time = g_timeNow;
-	return true;
 }
 
-bool CHandler::onWritten()
-{
-	this->_time = g_timeNow;
-	return true;
-}
-
-void CHandler::onClosed(VAS_REASON reason)
+void CHandler::onWritten()
 {
 	this->_time = g_timeNow;
 }

@@ -9,7 +9,9 @@ public:
 	CHandler_Server_Echo(int fd, int timeout);
 	virtual ~CHandler_Server_Echo();
 
-	bool onData();
+protected:
+	void _onData();
+	void _onClosed(VAS_REASON reason);
 };
 
 #endif

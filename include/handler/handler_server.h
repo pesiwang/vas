@@ -9,9 +9,10 @@ public:
 	CHandler_Server(int fd, int timeout);
 	virtual ~CHandler_Server();
 
-	virtual bool onRead();
+	virtual void onRead();
 
-	virtual bool onData() = 0;
+protected:
+	virtual void _onData() = 0;
 };
 
 #endif

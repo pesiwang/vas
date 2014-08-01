@@ -9,7 +9,9 @@ public:
 	CHandler_Listener_Echo(int fd);
 	virtual ~CHandler_Listener_Echo();
 
-	void onAccepted(int clientFd);
+protected:
+	void _onAccepted(int clientFd);
+	void _onClosed(VAS_REASON reason);
 };
 
 #endif

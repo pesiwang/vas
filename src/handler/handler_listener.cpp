@@ -21,14 +21,11 @@ CHandler_Listener::~CHandler_Listener()
 {
 }
 
-bool CHandler_Listener::onRead()
+void CHandler_Listener::onRead()
 {
-	if(!CHandler::onRead())
-		return false;
+	CHandler::onRead();
 
 	int clientFd;
-	while((clientFd = CHelper::Socket::accept(this->_fd)) >= 0){
-		this->onAccepted(clientFd);
-	}
-	return true;
+	while((clientFd = CHelper::Socket::accept(this->_fd)) >= 0)
+		this->_onAccepted(clientFd);
 }

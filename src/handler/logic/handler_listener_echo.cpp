@@ -10,7 +10,18 @@ CHandler_Listener_Echo::~CHandler_Listener_Echo()
 {
 }
 
-void CHandler_Listener_Echo::onAccepted(int clientFd)
+////////////////////////////////////////////////////////
+
+void CHandler_Listener_Echo::_onAccepted(int clientFd)
 {
-	CEventBase::instance()->add(clientFd, new CHandler_Server_Echo(clientFd, 60), VAS_HANDLER_ROLE_NORMAL);
+	CEventBase::JOB job;
+	job.cmd = VAS_COMMAND_ADD_FD;
+	job.fd = clientFd;
+	job.payload.handler = new CHandler_Server_Echo(clientFd, 60);
+	CEventBase::instance()->add(job);
+}
+
+void CHandler_Listener_Echo::_onClosed(VAS_REASON reason)
+{
+	log_debug("CHandler_Listener_Echo closed");
 }
