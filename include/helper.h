@@ -3,25 +3,47 @@
 
 #include "buffer.h"
 
-class CHelper
+namespace vas
 {
-public:
-	class Socket
+	class Helper
 	{
-	public:
-		static int listen(const char* addr, unsigned short port);
-		static int connect(const char* addr, unsigned short port);
-		static int accept(int listenerFd);
-		static bool read(int fd, CBuffer* buffer);
-		static bool write(int fd, CBuffer* buffer);
+		public:
+			class Socket
+			{
+				public:
+					static int create();
+					static int accept(int listenerFd);
+
+					static int listen(const char* addr, unsigned short port);
+					static int connect(const char* addr, unsigned short port);
+
+					static bool read(int fd, Buffer* buffer);
+					static bool write(int fd, Buffer* buffer);
+			};
+
+			class Application
+			{
+				public:
+					static void daemonize();
+					static bool setSignalHandler(int signal, void (*action)(int));
+			};
 	};
 
-	class Application
+	template <typename T>
+	class Singleton
 	{
 	public:
-		static void daemonize();
-		static bool setFileLimit(int limit);
+		static T* instance(){
+			static T self;
+			return &self;
+		}
+
+	private:
+		Singleton() {}
+		Singleton(Singleton const&) {};
+		Singleton& operator=(Singleton const&) {};
+		virtual ~Singleton() {}
 	};
-};
+}
 
 #endif

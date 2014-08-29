@@ -1,61 +1,31 @@
-#include <string.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <errno.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/resource.h>
 #include "helper.h"
 
-int CHelper::Socket::listen(const char* addr, unsigned short port)
+using namespace vas;
+
+int Helper::Socket::create()
 {
-	struct sockaddr_in sin;
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_addr.s_addr = inet_addr(addr);
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
-	int listenerFd = socket(AF_INET, SOCK_STREAM, 0);
-	if(listenerFd < 0)
+	int fd = socket(AF_INET, SOCK_STREAM, 0);
+	if(fd < 0)
 		return -1;
 
-	int optval = 1;
-	setsockopt(listenerFd, SOL_SOCKET, SO_REUSEADDR,(const void *)&optval, sizeof(optval));
-
-	fcntl(listenerFd, F_SETFL, fcntl(listenerFd, F_GETFL) | O_NONBLOCK);
-
-	if((::bind(listenerFd, (struct sockaddr *)&sin, sizeof(sin)) < 0) || (::listen(listenerFd, SOMAXCONN) < 0)){
-		close(listenerFd);
+	if(fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK) < 0){
+		close(fd);
 		return -1;
 	}
-	return listenerFd;
+	return fd;
 }
 
-int CHelper::Socket::connect(const char* addr, unsigned short port)
-{
-	int clientFd = socket(AF_INET, SOCK_STREAM, 0);
-	if(clientFd < 0)
-		return -1;
 
-	fcntl(clientFd, F_SETFL, fcntl(clientFd, F_GETFL) | O_NONBLOCK);
-
-	struct sockaddr_in sin;
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_addr.s_addr = inet_addr(addr);
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
-
-	int res = ::connect(clientFd, (struct sockaddr *)&sin, sizeof(sin));
-	if ((res < 0) && (errno != EINPROGRESS)){
-		close(clientFd);
-		return -1;
-	}
-	return clientFd;
-}
-
-int CHelper::Socket::accept(int listenerFd)
+int Helper::Socket::accept(int listenerFd)
 {
 	int sin_len = sizeof(struct sockaddr);
 	struct sockaddr_in sin;
@@ -63,11 +33,61 @@ int CHelper::Socket::accept(int listenerFd)
 	if(clientFd < 0)
 		return -1;
 
-	fcntl(clientFd, F_SETFL, fcntl(clientFd, F_GETFL) | O_NONBLOCK);
+	if(fcntl(clientFd, F_SETFL, fcntl(clientFd, F_GETFL) | O_NONBLOCK) < 0){
+		close(clientFd);
+		return -1;
+	}
 	return clientFd;
 }
 
-bool CHelper::Socket::read(int fd, CBuffer* buffer)
+int Helper::Socket::listen(const char* addr, unsigned short port)
+{
+	int fd = Helper::Socket::create();
+	if(fd < 0)
+		return -1;
+
+	struct sockaddr_in sin;
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_addr.s_addr = inet_addr(addr);
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(port);
+
+	int optval = 1;
+	setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,(const void *)&optval, sizeof(optval));
+
+	if(fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK) < 0){
+		close(fd);
+		return -1;
+	}
+
+	if((::bind(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) || (::listen(fd, SOMAXCONN) < 0)){
+		close(fd);
+		return -1;
+	}
+	return fd;
+}
+
+int Helper::Socket::connect(const char* addr, unsigned short port)
+{
+	int fd = Helper::Socket::create();
+	if(fd < 0)
+		return -1;
+
+	struct sockaddr_in sin;
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_addr.s_addr = inet_addr(addr);
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(port);
+
+	int res = ::connect(fd, (struct sockaddr *)&sin, sizeof(sin));
+	if ((res < 0) && (errno != EINPROGRESS)){
+		close(fd);
+		return -1;
+	}
+	return fd;
+}
+
+bool Helper::Socket::read(int fd, Buffer* buffer)
 {
 	char buf[1024];
 	int curr_read = 0;
@@ -77,7 +97,7 @@ bool CHelper::Socket::read(int fd, CBuffer* buffer)
 		total_read += curr_read;
 	}
 
-	if((curr_read == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
+	if((curr_read == -1) && (errno == EAGAIN))
 		return true;
 
 	if((curr_read == -1) || (total_read == 0)){
@@ -86,7 +106,7 @@ bool CHelper::Socket::read(int fd, CBuffer* buffer)
 	return true;
 }
 
-bool CHelper::Socket::write(int fd, CBuffer* buffer)
+bool Helper::Socket::write(int fd, Buffer* buffer)
 {
 	bool blocked = false;
 	char buf[1024];
@@ -97,7 +117,7 @@ bool CHelper::Socket::write(int fd, CBuffer* buffer)
 		while(n_left > 0){
 			int written = ::write(fd, buf + n_written, n_left);
 			if (written < n_left){
-				if((written == -1) && (errno != EAGAIN) && (errno != EWOULDBLOCK))
+				if((written == -1) && (errno != EAGAIN))
 					return false;
 
 				if(written == -1){
@@ -115,13 +135,12 @@ bool CHelper::Socket::write(int fd, CBuffer* buffer)
 		if(n_written > 0)
 			buffer->shrink(n_written);
 	}
-
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
 
-void CHelper::Application::daemonize()
+void Helper::Application::daemonize()
 {
 	pid_t pid;
 	if((pid = fork()) < 0)
@@ -133,12 +152,13 @@ void CHelper::Application::daemonize()
 	return;
 }
 
-bool CHelper::Application::setFileLimit(int limit)
+bool Helper::Application::setSignalHandler(int signal, void (*action)(int))
 {
-	struct rlimit resource;
-	resource.rlim_cur = limit;
-	resource.rlim_max = limit;
-//	if(setrlimit(RLIMIT_NOFILE, &resource) < 0)
-//		return false;
+	struct sigaction sa;
+	sa.sa_handler = action;
+	sa.sa_flags = 0;
+	if(sigemptyset(&sa.sa_mask) == -1 || sigaction(signal, &sa, NULL) == -1)
+		return false;
 	return true;
 }
+

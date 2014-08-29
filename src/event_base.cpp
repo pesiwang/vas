@@ -1,216 +1,247 @@
 #include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <time.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <time.h>
+#include <signal.h>
 #include <sys/epoll.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include "definition.h"
-#include "event_base.h"
-#include "handler/handler_listener.h"
 #include "helper.h"
+#include "event_base.h"
 
 using namespace std;
+using namespace vas;
 
-static int s_epollFd;
-time_t g_timeNow = time(NULL);
-time_t g_timeLast = g_timeNow;
+time_t g_timeNow = 0;
+time_t g_timeRecent = 0;
 
-CEventBase* CEventBase::_instance = NULL;
-
-CEventBase* CEventBase::instance()
+EventBase::EventBase() : _status(VAS_STATUS_STOPPED), _epollFd(-1)
 {
-	if(NULL == CEventBase::_instance)
-		CEventBase::_instance = new CEventBase();
-	return CEventBase::_instance;
-}
+	g_timeNow = time(NULL);
+	g_timeRecent = g_timeNow;
 
-void CEventBase::release()
-{
-	if(NULL != CEventBase::_instance){
-		delete CEventBase::_instance;
-		CEventBase::_instance = NULL;
+	this->_epollFd = ::epoll_create(64);
+	if(this->_epollFd < 0){
+		log_error("cannot create epoll file descriptor");
+		exit(-1);
+	}
+
+	if(!Helper::Application::setSignalHandler(SIGPIPE, SIG_IGN)){
+		log_error("failed to set SIGPIPE to SIG_IGN");
+		exit(-1);
+	}
+	if(!Helper::Application::setSignalHandler(SIGINT, EventBase::stop)){
+		log_error("failed to set SIGINT to handle_signal_int");
+		exit(-1);
 	}
 }
 
-void CEventBase::start()
+EventBase::~EventBase()
 {
-	if(EBS_STOPPED != this->_status)
-		throw VAS_ERR_INTERNAL;
-	
-	this->_status = EBS_RUNNING;
+	::close(this->_epollFd);
+	this->_epollFd = -1;
+}
 
-	struct epoll_event events[64];
-	while(EBS_RUNNING == this->_status){
+EventBase* EventBase::instance()
+{
+	static EventBase self;
+	return &self;
+}
+
+void EventBase::stop(int sig)
+{
+	instance()->_status = VAS_STATUS_STOPPING;
+}
+
+void EventBase::dispatch()
+{
+	this->_status = VAS_STATUS_RUNNING;
+	for(list<Observer*>::iterator iter = this->_observers.begin(); iter != this->_observers.end(); ++iter)
+		(*iter)->onStarted();
+
+	while(VAS_STATUS_RUNNING == this->_status){
+		struct epoll_event events[64];
 		g_timeNow = time(NULL);
-		if(g_timeNow >= (g_timeLast + 1)){
-			this->_timer();
-			g_timeLast = g_timeNow;
+		if(g_timeNow >= g_timeRecent + 1){
+			g_timeRecent = g_timeNow;
+			this->_doTimer();
 		}
 
-		int nfds = epoll_wait(s_epollFd, events, 64, 1000);
-		if (nfds == -1)
-			continue;
+		int nfds = epoll_wait(this->_epollFd, events, 64, 1000);
+		if (nfds < 0)
+			break;
 
 		for(int i = 0; i < nfds; ++i){
 			if(events[i].events & EPOLLIN){
-				map<int, CHandler*>::iterator iter = this->_sockets.find(events[i].data.fd);
-				CHandler *handler = (this->_sockets.end() == iter) ? NULL : iter->second;
-				if((NULL != handler) && (NULL != handler->_input))
-					if(!CHelper::Socket::read(handler->_fd, handler->_input))
-						this->_close(events[i].data.fd, handler, VAS_REASON_SERVER_CLOSED);
-
-				if(NULL != handler)
-					handler->onRead();
-
-				if(this->_jobs.size() > 0)
-					this->commit();
+				map<int, Listener*>::iterator iter = this->_listeners.find(events[i].data.fd);
+				if(this->_listeners.end() != iter){
+					Listener* listener = iter->second;
+					int clientFd = -1;
+					while((clientFd = Helper::Socket::accept(listener->fd)) >= 0){
+						listener->onAccepted(clientFd);
+					}
+				}
+				else{
+					map<int, Handler*>::iterator iter = this->_handlers.find(events[i].data.fd);
+					if(this->_handlers.end() == iter){
+						log_error("no handler associated with socket %d", events[i].data.fd);
+					}
+					else{
+						Handler* handler = iter->second;
+						if(!Helper::Socket::read(handler->fd, handler->input))
+							this->remove(handler);
+						else if(handler->input->size() > 0)
+							handler->onData();
+					}
+				}
 			}
-			if(events[i].events & EPOLLOUT){
-				map<int, CHandler*>::iterator iter = this->_sockets.find(events[i].data.fd);
-				CHandler *handler = (this->_sockets.end() == iter) ? NULL : iter->second;
-				if((NULL != handler) && (NULL != handler->_output) && (handler->_output->size() > 0))
-					if(!CHelper::Socket::write(handler->_fd, handler->_output))
-						this->_close(events[i].data.fd, handler, VAS_REASON_SERVER_CLOSED);
-
-				if(NULL != handler)
-					handler->onWritten();
+			else{
+				map<int, Handler*>::iterator iter = this->_handlers.find(events[i].data.fd);
+				if(this->_handlers.end() == iter){
+					log_error("no handler associated with socket %d", events[i].data.fd);
+				}
+				else{
+					Handler* handler = iter->second;
+					if(!handler->connected){
+						handler->connected = true;
+						handler->onConnected();
+					}
+					this->write(handler);
+				}
 			}
-        }
-    }
-	this->_status = EBS_STOPPED;
-}
-
-void CEventBase::stop()
-{
-	this->_status = EBS_STOPPING;
-}
-
-void CEventBase::add(const CEventBase::JOB& job)
-{
-	this->_jobs.push(job);
-}
-
-void CEventBase::commit()
-{
-	while(!this->_jobs.empty()){
-		CEventBase::JOB job = this->_jobs.front();
-		this->_jobs.pop();
-		switch(job.cmd){
-			case VAS_COMMAND_ADD_FD:
-				this->_add(job.fd, job.payload.handler);
-				break;
-			case VAS_COMMAND_DEL_FD:
-				this->_close(job.fd, job.payload.handler, VAS_REASON_SERVER_CLOSED);
-				break;
-			case VAS_COMMAND_ADD_BUFFER:
-				this->_addBuffer(job.fd, job.payload.buffer);
-				break;
 		}
 	}
+
+	list<Listener*> listeners;
+	for(map<int, Listener*>::iterator iter = this->_listeners.begin(); iter != this->_listeners.end(); ++iter)
+		listeners.push_back(iter->second);
+	for(list<Listener*>::iterator iter = listeners.begin(); iter != listeners.end(); ++iter)
+		this->remove(*iter);
+
+	list<Handler*> handlers;
+	for(map<int, Handler*>::iterator iter = this->_handlers.begin(); iter != this->_handlers.end(); ++iter)
+		handlers.push_back(iter->second);
+	for(list<Handler*>::iterator iter = handlers.begin(); iter != handlers.end(); ++iter)
+		this->remove(*iter);
+
+	this->_status = VAS_STATUS_STOPPED;
+	for(list<Observer*>::iterator iter = this->_observers.begin(); iter != this->_observers.end(); ++iter)
+		(*iter)->onStopped();
 }
 
-/////////////////////////////////////////////////////////
-
-CEventBase::CEventBase() : _status(EBS_STOPPED)
+void EventBase::add(Listener* listener)
 {
-	s_epollFd = epoll_create(64);
-	if(s_epollFd < 0)
-		throw VAS_ERR_INTERNAL;
-}
-
-CEventBase::~CEventBase()
-{
-	for(map<int, CHandler*>::iterator iter = this->_sockets.begin(); iter != this->_sockets.end(); ++iter)
-		delete iter->second;
-	this->_sockets.clear();
-
-	if(s_epollFd >= 0){
-		close(s_epollFd);
-		s_epollFd = -1;
-	}
-}
-
-void CEventBase::_timer()
-{
-	map<int, CHandler*>::iterator iter = this->_sockets.begin();
-	while(iter != this->_sockets.end()){
-		CHandler* handler = iter->second;
-		if((handler->_timeout > 0) && (handler->_time + handler->_timeout < g_timeNow)){
-			std::map<int, CHandler*>::iterator iterToErase = iter;
-			++iter;
-
-			CHandler* handler = iterToErase->second;
-			this->_close(iterToErase->first, handler, VAS_REASON_TIMEOUT);
-		}
-		else{
-			++iter;
-		}
-	}
-}
-
-void CEventBase::_add(int fd, CHandler* handler)
-{
-	map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
-	if(this->_sockets.end() != iter){
-		log_error("cannot add fd %d when its already there", fd);
+	if(NULL != this->_listeners[listener->fd]){
+		log_error("cannot add listener for socket %d for an existing one is there already", listener->fd);
 		return;
 	}
-
-	this->_sockets[fd] = handler;
 
 	struct epoll_event ev = {0};
-	ev.events = EPOLLET;
-
-	if(NULL != dynamic_cast<CHandler_Listener*>(handler)){
-		ev.events = EPOLLIN|EPOLLET;
+	ev.events = EPOLLIN|EPOLLET;
+	ev.data.fd = listener->fd;
+	if(epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, listener->fd, &ev) < 0){
+		log_error("failed to add fd %d to epoll", listener->fd);
+		return;
 	}
-	else{
-		ev.events = EPOLLIN|EPOLLOUT|EPOLLET;
-	}
-	
-	ev.data.fd = fd;
-	if(epoll_ctl(s_epollFd, EPOLL_CTL_ADD, fd, &ev) < 0)
-		log_error("failed to add fd %d to epoll", fd);
+	this->_listeners[listener->fd] = listener;
 }
 
-void CEventBase::_close(int fd, CHandler*& handler, VAS_REASON reason)
+void EventBase::add(Handler* handler)
 {
-	if(this->_sockets.find(fd) == this->_sockets.end()){
-		log_error("no handler found for socket %d [_close]", fd);
+	if(NULL != this->_handlers[handler->fd]){
+		log_error("cannot add handler for socket %d for an existing one is there already", handler->fd);
 		return;
 	}
 
-	::close(fd);
-	handler->_onClosed(reason);
-	delete handler;
-	handler = NULL;
-	this->_sockets.erase(fd);
+	struct epoll_event ev = {0};
+	ev.events = EPOLLIN|EPOLLET;
+    ev.data.fd = handler->fd;
+    if(epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, handler->fd, &ev) < 0)
+		log_error("failed to add fd %d to epoll", handler->fd);
+
+	this->_handlers[handler->fd] = handler;
 }
 
-void CEventBase::_addBuffer(int fd, CBuffer* buffer)
+void EventBase::add(Observer* observer)
 {
-	map<int, CHandler*>::iterator iter = this->_sockets.find(fd);
-	if(this->_sockets.end() == iter){
-		log_error("no handler found for socket %d [_addBuffer]", fd);
-		delete buffer;
-		return;
-	}
-
-	CHandler* handler = iter->second;
-	if(NULL != handler->_output){
-		handler->_output->append(buffer);
-		if(!CHelper::Socket::write(fd, handler->_output))
-			this->_close(fd, handler, VAS_REASON_SERVER_CLOSED);
-	}
-	if(NULL != handler)
-		handler->onWritten();
-	
-	delete buffer;
+	this->_observers.push_back(observer);
 }
 
+void EventBase::remove(Listener* listener)
+{
+	::close(listener->fd);
+	map<int, Listener*>::iterator iter = this->_listeners.find(listener->fd);
+	if(this->_listeners.end() != iter){
+		Listener* listener = iter->second;
+		listener->onClosed();
+		this->_listeners.erase(iter);
+	}
+}
+
+void EventBase::remove(Handler* handler)
+{
+	::close(handler->fd);
+	map<int, Handler*>::iterator iter = this->_handlers.find(handler->fd);
+	if(this->_handlers.end() != iter){
+		Handler* handler = iter->second;
+		handler->onClosed();
+		this->_handlers.erase(iter);
+	}
+}
+
+void EventBase::remove(Observer* observer)
+{
+	this->_observers.remove(observer);
+}
+
+void EventBase::write(Handler* handler)
+{
+	if(handler->output->size() > 0){
+		if(!Helper::Socket::write(handler->fd, handler->output)){
+			this->remove(handler);
+			return;
+		}
+
+		struct epoll_event ev = {0};
+		ev.data.fd = handler->fd;
+		if(handler->output->size() > 0)
+		    ev.events = EPOLLIN|EPOLLOUT|EPOLLET;
+		else
+		    ev.events = EPOLLIN|EPOLLET;
+		if(epoll_ctl(this->_epollFd, EPOLL_CTL_MOD, handler->fd, &ev) < 0){
+			log_error("failed to modify fd %d to epoll", handler->fd);
+			return;
+		}
+	}
+}
+
+EventBase::Handler* EventBase::getHandler(int fd)
+{
+	map<int, Handler*>::iterator iter = this->_handlers.find(fd);
+	if(this->_handlers.end() == iter)
+		return NULL;
+	return iter->second;
+}
+
+EventBase::Listener* EventBase::getListener(int fd)
+{
+	map<int, Listener*>::iterator iter = this->_listeners.find(fd);
+	if(this->_listeners.end() == iter)
+		return NULL;
+	return iter->second;
+}
+
+/////////////////////////////////////////////////////////////////
+
+void EventBase::_doTimer()
+{
+	list<Handler*> handlers;
+	for(map<int, Handler*>::iterator iter = this->_handlers.begin(); iter != this->_handlers.end(); ++iter){
+		Handler* handler = iter->second;
+		if((handler->time + 60) <= g_timeNow)
+			handlers.push_back(handler);
+	}
+
+	for(list<Handler*>::iterator iter = handlers.begin(); iter != handlers.end(); ++iter)
+		this->remove(*iter);
+
+	for(list<Observer*>::iterator iter = this->_observers.begin(); iter != this->_observers.end(); ++iter)
+		(*iter)->onTimer();
+}
