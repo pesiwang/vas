@@ -235,7 +235,7 @@ void EventBase::_doTimer()
 	list<Handler*> handlers;
 	for(map<int, Handler*>::iterator iter = this->_handlers.begin(); iter != this->_handlers.end(); ++iter){
 		Handler* handler = iter->second;
-		if((handler->time + 60) <= g_timeNow)
+		if((handler->maxIdleTime > 0) && ((handler->lastActiveTime + handler->maxIdleTime) <= g_timeNow))
 			handlers.push_back(handler);
 	}
 

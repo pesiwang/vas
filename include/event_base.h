@@ -61,7 +61,7 @@ namespace vas
 			class Handler
 			{
 				public:
-					Handler() : fd(-1), input(NULL), output(NULL), connected(false), time(g_timeNow) { this->input = new Buffer(); this->output = new Buffer(); }
+					Handler() : fd(-1), input(NULL), output(NULL), connected(false), lastActiveTime(g_timeNow), maxIdleTime(0) { this->input = new Buffer(); this->output = new Buffer(); }
 					virtual ~Handler() { if(NULL != this->input) { delete this->input; this->input = NULL; } if(NULL != this->output) { delete this->output; this->output = NULL; } }
 
 					virtual void onConnected() = 0;
@@ -73,7 +73,8 @@ namespace vas
 					Buffer* input;
 					Buffer* output;
 					bool connected;
-					time_t time;
+					time_t lastActiveTime;
+					time_t maxIdleTime;
 			};
 
 		public:
