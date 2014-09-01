@@ -151,7 +151,7 @@ void EventBase::add(Handler* handler)
 	}
 
 	struct epoll_event ev = {0};
-	ev.events = EPOLLIN|EPOLLET;
+	ev.events = EPOLLIN|EPOLLOUT|EPOLLET;
     ev.data.fd = handler->fd;
     if(epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, handler->fd, &ev) < 0)
 		log_error("failed to add fd %d to epoll", handler->fd);
@@ -196,17 +196,6 @@ void EventBase::write(Handler* handler)
 	if(handler->output->size() > 0){
 		if(!Helper::Socket::write(handler->fd, handler->output)){
 			this->remove(handler);
-			return;
-		}
-
-		struct epoll_event ev = {0};
-		ev.data.fd = handler->fd;
-		if(handler->output->size() > 0)
-		    ev.events = EPOLLIN|EPOLLOUT|EPOLLET;
-		else
-		    ev.events = EPOLLIN|EPOLLET;
-		if(epoll_ctl(this->_epollFd, EPOLL_CTL_MOD, handler->fd, &ev) < 0){
-			log_error("failed to modify fd %d to epoll", handler->fd);
 			return;
 		}
 	}

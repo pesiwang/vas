@@ -15,7 +15,7 @@ namespace vas
 
 		size_t shrink(size_t count);
 		size_t peek(char* data, size_t count) const;
-		size_t read(char* data, size_t count);
+		size_t read(const char* data, size_t count);
 		void write(const char* data, size_t count);
 		void append(const Buffer* buffer);
 

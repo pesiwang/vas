@@ -37,24 +37,24 @@ size_t Buffer::shrink(size_t count)
 	return count;
 }
 
-size_t Buffer::read(char* data, size_t count)
+size_t Buffer::read(const char* data, size_t count)
 {
 	if(count == 0) return 0;
 	if(count > size())
 		count = size();
 
 	if(count < (size_t)(_data_end_ptr - _cursor_beg_ptr)){
-		memcpy(data, _cursor_beg_ptr, count);
+		memcpy((void *)data, _cursor_beg_ptr, count);
 		_cursor_beg_ptr += count;
 		if(_cursor_beg_ptr == _data_end_ptr)
 			_cursor_beg_ptr = _data_beg_ptr;
 	}
 	else{
 		size_t n_items_1 = _data_end_ptr - _cursor_beg_ptr;
-		memcpy(data, _cursor_beg_ptr, n_items_1);
+		memcpy((void *)data, _cursor_beg_ptr, n_items_1);
 
 		size_t n_items_2 = count - n_items_1;
-		memcpy(data + n_items_1, _data_beg_ptr, n_items_2);
+		memcpy((void *)(data + n_items_1), _data_beg_ptr, n_items_2);
 
 		_cursor_beg_ptr = _data_beg_ptr + n_items_2;
 	}
