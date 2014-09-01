@@ -85,6 +85,8 @@ void EventBase::dispatch()
 					}
 					else{
 						Handler* handler = iter->second;
+						handler->lastActiveTime = g_timeNow;
+
 						if(!Helper::Socket::read(handler->fd, handler->input))
 							this->remove(handler);
 						else if(handler->input->size() > 0)
