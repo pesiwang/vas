@@ -94,7 +94,7 @@ void EventBase::dispatch()
 					}
 				}
 			}
-			else{
+			else if(events[i].events & EPOLLOUT){
 				map<int, Handler*>::iterator iter = this->_handlers.find(events[i].data.fd);
 				if(this->_handlers.end() == iter){
 					log_error("no handler associated with socket %d", events[i].data.fd);
@@ -169,6 +169,7 @@ void EventBase::add(Observer* observer)
 void EventBase::remove(Listener* listener)
 {
 	::close(listener->fd);
+	::epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, listener->fd, NULL);
 	map<int, Listener*>::iterator iter = this->_listeners.find(listener->fd);
 	if(this->_listeners.end() != iter){
 		Listener* listener = iter->second;
@@ -180,9 +181,11 @@ void EventBase::remove(Listener* listener)
 void EventBase::remove(Handler* handler)
 {
 	::close(handler->fd);
+	::epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, handler->fd, NULL);
 	map<int, Handler*>::iterator iter = this->_handlers.find(handler->fd);
 	if(this->_handlers.end() != iter){
 		Handler* handler = iter->second;
+		handler->connected = false;
 		handler->onClosed();
 		this->_handlers.erase(iter);
 	}
