@@ -3,6 +3,8 @@
 #include <time.h>
 #include <signal.h>
 #include <sys/epoll.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include "helper.h"
 #include "event_base.h"
 
@@ -102,8 +104,16 @@ void EventBase::dispatch()
 				else{
 					Handler* handler = iter->second;
 					if(!handler->connected){
-						handler->connected = true;
-						handler->onConnected();
+						int result;
+						socklen_t result_len = sizeof(result);
+						if((getsockopt(handler->fd, SOL_SOCKET, SO_ERROR, &result, &result_len) < 0) || (result != 0)){
+							log_error("connect failed for socket %d", handler->fd);
+							this->remove(handler);
+						}
+						else{
+							handler->connected = true;
+							handler->onConnected();
+						}
 					}
 					this->write(handler);
 				}
@@ -169,7 +179,6 @@ void EventBase::add(Observer* observer)
 void EventBase::remove(Listener* listener)
 {
 	::close(listener->fd);
-	::epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, listener->fd, NULL);
 	map<int, Listener*>::iterator iter = this->_listeners.find(listener->fd);
 	if(this->_listeners.end() != iter){
 		Listener* listener = iter->second;
@@ -181,7 +190,6 @@ void EventBase::remove(Listener* listener)
 void EventBase::remove(Handler* handler)
 {
 	::close(handler->fd);
-	::epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, handler->fd, NULL);
 	map<int, Handler*>::iterator iter = this->_handlers.find(handler->fd);
 	if(this->_handlers.end() != iter){
 		Handler* handler = iter->second;
