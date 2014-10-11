@@ -1,6 +1,14 @@
+/*
+ * buffer.cpp
+ *
+ *  Created on: Oct 8, 2014
+ *	  Author: chenrui
+ */
+
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include "buffer.h"
+#include "exception.h"
 
 using namespace vas;
 
@@ -17,11 +25,11 @@ Buffer::~Buffer()
 	free(_data_beg_ptr);
 }
 
-size_t Buffer::shrink(size_t count)
+void Buffer::shrink(size_t count)
 {
-	if(count == 0) return 0;
-	if(count > size())
-		count = size();
+	if(count == 0) return;
+	if(count > this->size())
+		throw Exception("not enough data to shrink");
 
 	if(count < (size_t)(_data_end_ptr - _cursor_beg_ptr)){
 		_cursor_beg_ptr += count;
@@ -34,14 +42,13 @@ size_t Buffer::shrink(size_t count)
 		_cursor_beg_ptr = _data_beg_ptr + n_items_2;
 	}
 	_size -= count;
-	return count;
 }
 
-size_t Buffer::read(const char* data, size_t count)
+void Buffer::read(const char* data, size_t count)
 {
-	if(count == 0) return 0;
+	if(count == 0) return;
 	if(count > size())
-		count = size();
+		throw Exception("not enough data to read");
 
 	if(count < (size_t)(_data_end_ptr - _cursor_beg_ptr)){
 		memcpy((void *)data, _cursor_beg_ptr, count);
@@ -59,14 +66,13 @@ size_t Buffer::read(const char* data, size_t count)
 		_cursor_beg_ptr = _data_beg_ptr + n_items_2;
 	}
 	_size -= count;
-	return count;
 }
 
-size_t Buffer::peek(char* data, size_t count) const
+void Buffer::peek(char* data, size_t count) const
 {
-	if(count == 0) return 0;
+	if(count == 0) return;
 	if(count > size())
-		count = size();
+		throw Exception("not enough data to peek");
 
 	if(count < (size_t)(_data_end_ptr - _cursor_beg_ptr)){
 		memcpy(data, _cursor_beg_ptr, count);
@@ -78,7 +84,6 @@ size_t Buffer::peek(char* data, size_t count) const
 		size_t n_items_2 = count - n_items_1;
 		memcpy(data + n_items_1, _data_beg_ptr, n_items_2);
 	}
-	return count;
 }
 
 void Buffer::write(const char* data, size_t count)
@@ -125,157 +130,153 @@ void Buffer::append(const Buffer* buffer)
 	return;
 }
 
-void Buffer::shrinkByte()
+void Buffer::shrinkInt8()
 {
-	this->shrink(sizeof(char));
+	this->shrink(sizeof(int8_t));
 }
 
-char Buffer::peekByte() const
+void Buffer::shrinkUInt8()
 {
-	char val;
-	this->peek((char *)&val, sizeof(val));
+	this->shrink(sizeof(uint8_t));
+}
+
+int8_t Buffer::peekInt8() const
+{
+	int8_t val;
+	this->peek((char*)&val, sizeof(val));
 	return val;
 }
 
-char Buffer::readByte()
+uint8_t Buffer::peekUInt8() const
 {
-	char val;
-	this->read((char *)&val, sizeof(val));
+	uint8_t val;
+	this->peek((char*)&val, sizeof(val));
 	return val;
 }
 
-void Buffer::writeByte(const char data)
+int8_t Buffer::readInt8()
 {
-	char val = data;
-	this->write((char *)&val, sizeof(val));
-}
-
-void Buffer::shrinkUnsignedByte()
-{
-	this->shrink(sizeof(unsigned char));
-}
-
-unsigned char Buffer::peekUnsignedByte() const
-{
-	unsigned char val;
-	this->peek((char *)&val, sizeof(val));
+	int8_t val;
+	this->read((char*)&val, sizeof(val));
 	return val;
 }
 
-unsigned char Buffer::readUnsignedByte()
+uint8_t Buffer::readUInt8()
 {
-	unsigned char val;
-	this->read((char *)&val, sizeof(val));
+	uint8_t val;
+	this->read((char*)&val, sizeof(val));
 	return val;
 }
 
-void Buffer::writeUnsignedByte(const unsigned char data)
+void Buffer::writeInt8(const int8_t data)
 {
-	unsigned char val = data;
-	this->write((char *)&val, sizeof(val));
+	this->write((char *)&data, sizeof(data));
 }
 
-void Buffer::shrinkShort()
+void Buffer::writeUInt8(const uint8_t data)
 {
-	this->shrink(sizeof(short));
+	this->write((char *)&data, sizeof(data));
 }
 
-short Buffer::peekShort() const
+void Buffer::shrinkInt16()
 {
-	short val;
-	this->peek((char *)&val, sizeof(val));
+	this->shrink(sizeof(int16_t));
+}
+
+void Buffer::shrinkUInt16()
+{
+	this->shrink(sizeof(uint16_t));
+}
+
+int16_t Buffer::peekInt16() const
+{
+	int16_t val;
+	this->peek((char*)&val, sizeof(val));
 	return ntohs(val);
 }
 
-short Buffer::readShort()
+uint16_t Buffer::peekUInt16() const
 {
-	short val;
-	this->read((char *)&val, sizeof(val));
+	uint16_t val;
+	this->peek((char*)&val, sizeof(val));
 	return ntohs(val);
 }
 
-void Buffer::writeShort(const short data)
+int16_t Buffer::readInt16()
 {
-	short val = htons(data);
-	this->write((char *)&val, sizeof(val));
-}
-
-void Buffer::shrinkUnsignedShort()
-{
-	this->shrink(sizeof(unsigned short));
-}
-
-unsigned short Buffer::peekUnsignedShort() const
-{
-	unsigned short val;
-	this->peek((char *)&val, sizeof(val));
+	int16_t val;
+	this->read((char*)&val, sizeof(val));
 	return ntohs(val);
 }
 
-unsigned short Buffer::readUnsignedShort()
+uint16_t Buffer::readUInt16()
 {
-	unsigned short val;
-	this->read((char *)&val, sizeof(val));
+	uint16_t val;
+	this->read((char*)&val, sizeof(val));
 	return ntohs(val);
 }
 
-void Buffer::writeUnsignedShort(const unsigned short data)
+void Buffer::writeInt16(const int16_t data)
 {
-	unsigned short val = htons(data);
-	this->write((char *)&val, sizeof(val));
+	int16_t val = htons(data);
+	this->write((char*)&val, sizeof(val));
 }
 
-void Buffer::shrinkInt()
+void Buffer::writeUInt16(const uint16_t data)
 {
-	this->shrink(sizeof(int));
+	uint16_t val = htons(data);
+	this->write((char*)&val, sizeof(val));
 }
 
-int Buffer::peekInt() const
+void Buffer::shrinkInt32()
 {
-	int val;
-	this->peek((char *)&val, sizeof(val));
+	this->shrink(sizeof(int32_t));
+}
+
+void Buffer::shrinkUInt32()
+{
+	this->shrink(sizeof(uint32_t));
+}
+
+int32_t Buffer::peekInt32() const
+{
+	int32_t val;
+	this->peek((char*)&val, sizeof(val));
 	return ntohl(val);
 }
 
-int Buffer::readInt()
+uint32_t Buffer::peekUInt32() const
 {
-	int val;
-	this->read((char *)&val, sizeof(val));
+	uint32_t val;
+	this->peek((char*)&val, sizeof(val));
 	return ntohl(val);
 }
 
-void Buffer::writeInt(const int data)
+int32_t Buffer::readInt32()
 {
-	int val = htonl(data);
-	this->write((char *)&val, sizeof(val));
-}
-
-void Buffer::shrinkUnsignedInt()
-{
-	this->shrink(sizeof(unsigned int));
-}
-
-unsigned int Buffer::peekUnsignedInt() const
-{
-	unsigned int val;
-	this->peek((char *)&val, sizeof(val));
+	int32_t val;
+	this->read((char*)&val, sizeof(val));
 	return ntohl(val);
 }
 
-unsigned int Buffer::readUnsignedInt()
+uint32_t Buffer::readUInt32()
 {
-	unsigned int val;
-	this->read((char *)&val, sizeof(val));
+	uint32_t val;
+	this->read((char*)&val, sizeof(val));
 	return ntohl(val);
 }
 
-void Buffer::writeUnsignedInt(const unsigned int data)
+void Buffer::writeInt32(const int32_t data)
 {
-	unsigned int val = htonl(data);
-	this->write((char *)&val, sizeof(val));
+	int32_t val = htonl(data);
+	this->write((char*)&val, sizeof(val));
 }
 
-///////////////////////////////////////////////
+void Buffer::writeUInt32(const uint32_t data)
+{
+	uint32_t val = htonl(data);
+	this->write((char*)&val, sizeof(val));
+}
 
 void Buffer::_inflate()
 {

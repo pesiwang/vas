@@ -1,112 +1,82 @@
-#ifndef _VAS_EVENT_BASE_H
-#define _VAS_EVENT_BASE_H
+/*
+ * event_base.h
+ *
+ *  Created on: Oct 8, 2014
+ *      Author: chenrui
+ */
+
+#ifndef VAS_EVENT_BASE_H_
+#define VAS_EVENT_BASE_H_
 
 #include <map>
 #include <list>
-#include <time.h>
-#include <stdio.h>
-#include "buffer.h"
-#include "helper.h"
-
-#define _log_printf(ls, fn, ln, ... ) do {time_t time_now; time_now = time(&time_now); struct tm *tm_now = localtime((const time_t*)&time_now); fprintf(stderr, "[%04d-%02d-%02d %02d:%02d:%02d][%s][%s:%d]", 1900 + tm_now->tm_year, 1 + tm_now->tm_mon, tm_now->tm_mday, tm_now->tm_hour, tm_now->tm_min, tm_now->tm_sec , ls, fn, ln); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n"); }while(0)
-
-#define log_error( ... ) _log_printf("ERROR", __FILE__, __LINE__, __VA_ARGS__ )
-#ifdef DEBUG
-#define log_debug( ... ) _log_printf("DEBUG", __FILE__, __LINE__, __VA_ARGS__ )
-#else
-#define log_debug( ... )
-#endif
-
-extern time_t g_timeNow;
+#include "role_listener.h"
+#include "role_observer.h"
+#include "role_service.h"
 
 namespace vas
 {
-	enum VAS_STATUS
-	{
-		VAS_STATUS_STOPPED = 0,
-		VAS_STATUS_RUNNING,
-		VAS_STATUS_STOPPING
-	};
-
 	class EventBase
 	{
-		public:
-			//observer socket representant
-			class Observer
-			{
-				public:
-					Observer() {}
-					virtual ~Observer() {}
+	public:
+		enum Event{
+			EVENT_STARTED,
+			EVENT_STOPPED,
+			EVENT_TIMER,
+			EVENT_LISTENER_REGISTERED,
+			EVENT_LISTENER_UNREGISTERED,
+			EVENT_SERVICE_REGISTERED,
+			EVENT_SERVICE_UNREGISTERED,
+			EVENT_SERVICE_DATA_ARRIVED,
+			EVENT_SERVICE_DATA_SENT
+		};
 
-					virtual void onStarted() = 0;
-					virtual void onStopped() = 0;
-					virtual void onTimer() = 0;
-			};
+		enum State{
+			STATE_STOPPED,
+			STATE_RUNNING,
+			STATE_STOPPING
+		};
+	public:
+		static EventBase* instance();
+		static void stop(int sig);
+		void dispatch();
 
-			//listener socket representant
-			class Listener
-			{
-				public:
-					Listener() : fd(-1) {}
-					virtual ~Listener() {}
+		void addObserver(Event event, RoleObserver* observer);
+		void removeObserver(Event event, RoleObserver* observer);
+		void notifyObserver(Event event, void* ctx);
 
-					virtual void onAccepted(int clientFd) = 0;
-					virtual void onClosed() = 0;
+		void registerListener(RoleListener* listener);
+		void unregisterListener(RoleListener* listener);
 
-				public:
-					int fd;
-			};
+		void registerService(RoleService* service);
+		void unregisterService(RoleService* service);
 
-			//handler socket representant
-			class Handler
-			{
-				public:
-					Handler() : fd(-1), input(NULL), output(NULL), connected(false), lastActiveTime(g_timeNow), maxIdleTime(0) { this->input = new Buffer(); this->output = new Buffer(); }
-					virtual ~Handler() { if(NULL != this->input) { delete this->input; this->input = NULL; } if(NULL != this->output) { delete this->output; this->output = NULL; } }
+		RoleService* findService(int fd);
 
-					virtual void onConnected() = 0;
-					virtual void onData() = 0;
-					virtual void onClosed() = 0;
+	private:
+		EventBase();
+		virtual ~EventBase();
 
-				public:
-					int fd;
-					Buffer* input;
-					Buffer* output;
-					bool connected;
-					time_t lastActiveTime;
-					time_t maxIdleTime;
-			};
+		void _doAccept(int fd);
+		void _doRead(int fd);
+		void _doWrite(int fd);
+		void _doShutdown();
 
-		public:
-			static EventBase* instance();
-			static void stop(int sig);
-			void dispatch();
+	private:
+		std::list<RoleObserver*> _observersForEventStarted;
+		std::list<RoleObserver*> _observersForEventStopped;
+		std::list<RoleObserver*> _observersForEventTimer;
+		std::list<RoleObserver*> _observersForEventListenerRegistered;
+		std::list<RoleObserver*> _observersForEventListenerUnregistered;
+		std::list<RoleObserver*> _observersForEventServiceRegistered;
+		std::list<RoleObserver*> _observersForEventServiceUnregistered;
+		std::list<RoleObserver*> _observersForEventServiceDataArrived;
+		std::list<RoleObserver*> _observersForEventServiceDataSent;
 
-			void add(Handler* handler);
-			void add(Listener* listener);
-			void add(Observer* observer);
-			void remove(Handler* handler);
-			void remove(Listener* listener);
-			void remove(Observer* observer);
-			void write(Handler* handler);
-
-			Handler* getHandler(int fd);
-			Listener* getListener(int fd);
-
-		protected:
-			EventBase();
-			virtual ~EventBase();
-
-			void _doTimer();
-
-		protected:
-			volatile VAS_STATUS _status;
-			int _epollFd;
-
-			std::map<int, Listener*> _listeners;
-			std::map<int, Handler*> _handlers;
-			std::list<Observer*> _observers;
+		std::map<int, RoleListener*> _listeners;
+		std::map<int, RoleService*> _services;
+		State _state;
+		int _epollFd;
 	};
 }
-
-#endif
+#endif /* VAS_EVENTBASE_H_ */
