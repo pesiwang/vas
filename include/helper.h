@@ -9,6 +9,7 @@
 #define VAS_HELPER_H_
 
 #include <time.h>
+#include <json/json.h>
 #include "buffer.h"
 
 #define VAS_LOGGER_DEBUG(...) vas::Helper::Logger::debug(__FILE__, __LINE__, __VA_ARGS__);
@@ -43,6 +44,27 @@ namespace vas
 		public:
 			static void debug(const char* file, int line, const char* fmt, ...);
 			static void error(const char* file, int line, const char* fmt, ...);
+		};
+
+		class Config
+		{
+		public:
+			void load(const char* configFile);
+
+			int valueAsInteger(const std::string& key) const;
+			const std::string& valueAsString(const std::string& key) const;
+			double valueAsDouble(const std::string& key) const;
+			bool valueAsBoolean(const std::string& key) const;
+
+		private:
+			std::map<std::string, int> _map2Integer;
+			std::map<std::string, std::string> _map2String;
+			std::map<std::string, bool> _map2Boolean;
+			std::map<std::string, double> _map2Double;
+
+		private:
+			void _travel(std::string prefix, Json::Value& root);
+			void _add(const std::string& key, Json::Value val);
 		};
 
 		class Clock

@@ -12,13 +12,16 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <fstream>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/resource.h>
 #include "helper.h"
+#include "exception.h"
 
 using namespace vas;
+using namespace std;
 
 int Helper::Socket::create(){
 	int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -200,6 +203,85 @@ void Helper::Logger::error(const char* file, int line, const char* fmt, ...){
 }
 
 ////////////////////////////////////////////////////////////////
+
+void Helper::Config::load(const char* configFile)
+{
+    ifstream iss(configFile, ifstream::binary);
+    Json::Value root;
+    Json::Reader reader;
+    if(!reader.parse(iss, root, false))
+        throw Exception("cannot parse configure file " + (string)configFile);
+
+    string prefix = "";
+    this->_travel(prefix, root);
+    iss.close();
+}
+
+int Helper::Config::valueAsInteger(const string& key) const{
+	map<string, int>::const_iterator iter = this->_map2Integer.find(key);
+	if(iter == this->_map2Integer.end())
+		throw Exception("cannot find configure key = " + key);
+	return iter->second;
+}
+
+const string& Helper::Config::valueAsString(const string& key) const{
+	map<string, string>::const_iterator iter = this->_map2String.find(key);
+	if(iter == this->_map2String.end())
+	   	throw Exception("cannot find configure key = " + key);
+	return iter->second;
+}
+
+double Helper::Config::valueAsDouble(const string& key) const{
+	map<string, double>::const_iterator iter = this->_map2Double.find(key);
+	if(iter == this->_map2Double.end())
+		throw Exception("cannot find configure key = " + key);
+	return iter->second;
+}
+
+bool Helper::Config::valueAsBoolean(const string& key) const{
+	map<string, bool>::const_iterator iter = this->_map2Boolean.find(key);
+	if(iter == this->_map2Boolean.end())
+		throw Exception("cannot find configure key = " + key);
+	return iter->second;
+}
+
+void Helper::Config::_travel(string prefix, Json::Value& root)
+{
+    if(root.size() > 0){
+        for(Json::ValueIterator itr = root.begin() ; itr != root.end() ; itr++){
+            string subPrefix = prefix;
+            if(prefix.length() > 0)
+                subPrefix += ".";
+            subPrefix += itr.key().asString();
+            this->_travel(subPrefix, *itr);
+        }
+    }
+    else {
+        this->_add(prefix, root);
+    }
+}
+
+void Helper::Config::_add(const string& key, Json::Value val)
+{
+    if(val.isString()){
+        this->_map2String[key] = val.asString();
+    }
+    else if(val.isBool()){
+        this->_map2Boolean[key] = val.asBool();
+    }
+    else if(val.isInt()) {
+        this->_map2Integer[key] = val.asInt();
+    }
+    else if(val.isUInt()) {
+        this->_map2Integer[key] = val.asUInt();
+    }
+    else if(val.isDouble()) {
+        this->_map2Double[key] = val.asDouble();
+    }
+}
+
+////////////////////////////////////////////////////////////////
+
 time_t Helper::Clock::_current = time(NULL);
 time_t Helper::Clock::_recent = Helper::Clock::_current;
 
