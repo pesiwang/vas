@@ -194,7 +194,7 @@ void Helper::Logger::debug(const char* file, int line, const char* fmt, ...){
 void Helper::Logger::error(const char* file, int line, const char* fmt, ...){
 	time_t time_now = time(NULL);
 	struct tm *tm_now = localtime((const time_t*)&time_now);
-	fprintf(stderr, "[%04d-%02d-%02d %02d:%02d:%02d][ERRIR][%s:%d]", 1900 + tm_now->tm_year, 1 + tm_now->tm_mon, tm_now->tm_mday, tm_now->tm_hour, tm_now->tm_min, tm_now->tm_sec , file, line);
+	fprintf(stderr, "[%04d-%02d-%02d %02d:%02d:%02d][ERROR][%s:%d]", 1900 + tm_now->tm_year, 1 + tm_now->tm_mon, tm_now->tm_mday, tm_now->tm_hour, tm_now->tm_min, tm_now->tm_sec , file, line);
 	va_list list;
 	va_start(list, fmt);
 	vfprintf(stderr, fmt, list);

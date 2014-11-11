@@ -9,7 +9,7 @@
 #define VAS_HELPER_H_
 
 #include <time.h>
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 #include "buffer.h"
 
 #define VAS_LOGGER_DEBUG(...) vas::Helper::Logger::debug(__FILE__, __LINE__, __VA_ARGS__);
