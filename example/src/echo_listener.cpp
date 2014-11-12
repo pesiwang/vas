@@ -5,7 +5,7 @@
 
 using namespace vas;
 
-EchoListener::EchoListener(int fd) : RoleListener(fd){
+EchoListener::EchoListener(int fd) : Listener(fd){
 }
 
 EchoListener::~EchoListener(){

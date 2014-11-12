@@ -8,9 +8,9 @@
 #ifndef ECHO_SERVICE_H_
 #define ECHO_SERVICE_H_
 
-#include "vas/role_service.h"
+#include "vas/service.h"
 
-class EchoService : public vas::RoleService
+class EchoService : public vas::Service
 {
 public:
 	EchoService(int fd);

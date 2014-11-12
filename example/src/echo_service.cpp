@@ -3,7 +3,7 @@
 
 using namespace vas;
 
-EchoService::EchoService(int fd) : RoleService(fd){
+EchoService::EchoService(int fd) : Service(fd){
 }
 
 EchoService::~EchoService(){

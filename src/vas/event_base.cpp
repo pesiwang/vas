@@ -8,8 +8,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/epoll.h>
-#include "event_base.h"
-#include "helper.h"
+#include "vas/event_base.h"
+#include "vas/helper.h"
 
 using namespace vas;
 using namespace std;
@@ -78,7 +78,7 @@ void EventBase::dispatch(){
 
 //////////////////////////////////////////////////////////////////////
 
-void EventBase::addObserver(Event event, RoleObserver* observer){
+void EventBase::addObserver(Event event, Observer* observer){
 	switch(event){
 		case EVENT_STARTED:
 			this->_observersForEventStarted.push_back(observer);
@@ -113,7 +113,7 @@ void EventBase::addObserver(Event event, RoleObserver* observer){
 	}
 }
 
-void EventBase::removeObserver(Event event, RoleObserver* observer){
+void EventBase::removeObserver(Event event, Observer* observer){
 	switch(event){
 		case EVENT_STARTED:
 			this->_observersForEventStarted.remove(observer);
@@ -145,40 +145,40 @@ void EventBase::removeObserver(Event event, RoleObserver* observer){
 void EventBase::notifyObserver(Event event, void* ctx){
 	switch(event){
 		case EVENT_STARTED:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventStarted.begin(); iter != this->_observersForEventStarted.end(); ++iter)
+			for(list<Observer*>::iterator iter = this->_observersForEventStarted.begin(); iter != this->_observersForEventStarted.end(); ++iter)
 				(*iter)->onStarted();
 			break;
 		case EVENT_STOPPED:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventStopped.begin(); iter != this->_observersForEventStopped.end(); ++iter)
+			for(list<Observer*>::iterator iter = this->_observersForEventStopped.begin(); iter != this->_observersForEventStopped.end(); ++iter)
 				(*iter)->onStopped();
 			break;
 		case EVENT_TIMER:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventTimer.begin(); iter != this->_observersForEventTimer.end(); ++iter)
+			for(list<Observer*>::iterator iter = this->_observersForEventTimer.begin(); iter != this->_observersForEventTimer.end(); ++iter)
 				(*iter)->onTimer();
 			break;
 		case EVENT_LISTENER_REGISTERED:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventListenerRegistered.begin(); iter != this->_observersForEventListenerRegistered.end(); ++iter)
-				(*iter)->onListenerRegistered((RoleListener*)ctx);
+			for(list<Observer*>::iterator iter = this->_observersForEventListenerRegistered.begin(); iter != this->_observersForEventListenerRegistered.end(); ++iter)
+				(*iter)->onListenerRegistered((Listener*)ctx);
 			break;
 		case EVENT_LISTENER_UNREGISTERED:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventListenerUnregistered.begin(); iter != this->_observersForEventListenerUnregistered.end(); ++iter)
-				(*iter)->onListenerUnregistered((RoleListener*)ctx);
+			for(list<Observer*>::iterator iter = this->_observersForEventListenerUnregistered.begin(); iter != this->_observersForEventListenerUnregistered.end(); ++iter)
+				(*iter)->onListenerUnregistered((Listener*)ctx);
 			break;
 		case EVENT_SERVICE_REGISTERED:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventServiceRegistered.begin(); iter != this->_observersForEventServiceRegistered.end(); ++iter)
-				(*iter)->onServiceRegistered((RoleService*)ctx);
+			for(list<Observer*>::iterator iter = this->_observersForEventServiceRegistered.begin(); iter != this->_observersForEventServiceRegistered.end(); ++iter)
+				(*iter)->onServiceRegistered((Service*)ctx);
 			break;
 		case EVENT_SERVICE_UNREGISTERED:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventServiceUnregistered.begin(); iter != this->_observersForEventServiceUnregistered.end(); ++iter)
-				(*iter)->onServiceUnregistered((RoleService*)ctx);
+			for(list<Observer*>::iterator iter = this->_observersForEventServiceUnregistered.begin(); iter != this->_observersForEventServiceUnregistered.end(); ++iter)
+				(*iter)->onServiceUnregistered((Service*)ctx);
 			break;
 		case EVENT_SERVICE_DATA_ARRIVED:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventServiceDataArrived.begin(); iter != this->_observersForEventServiceDataArrived.end(); ++iter)
-				(*iter)->onServiceDataArrived((RoleService*)ctx);
+			for(list<Observer*>::iterator iter = this->_observersForEventServiceDataArrived.begin(); iter != this->_observersForEventServiceDataArrived.end(); ++iter)
+				(*iter)->onServiceDataArrived((Service*)ctx);
 			break;
 		case EVENT_SERVICE_DATA_SENT:
-			for(list<RoleObserver*>::iterator iter = this->_observersForEventServiceDataSent.begin(); iter != this->_observersForEventServiceDataSent.end(); ++iter)
-				(*iter)->onServiceDataSent((RoleService*)ctx);
+			for(list<Observer*>::iterator iter = this->_observersForEventServiceDataSent.begin(); iter != this->_observersForEventServiceDataSent.end(); ++iter)
+				(*iter)->onServiceDataSent((Service*)ctx);
 			break;
 		default:
 			VAS_LOGGER_ERROR("trying to notify an unknown event=%d", event);
@@ -186,7 +186,7 @@ void EventBase::notifyObserver(Event event, void* ctx){
 	}
 }
 
-void EventBase::registerListener(RoleListener* listener){
+void EventBase::registerListener(Listener* listener){
 	struct epoll_event ev = {0};
 	ev.events = EPOLLIN|EPOLLET;
 	ev.data.fd = listener->getFd();
@@ -198,14 +198,14 @@ void EventBase::registerListener(RoleListener* listener){
 	this->notifyObserver(EVENT_LISTENER_REGISTERED, listener);
 }
 
-void EventBase::unregisterListener(RoleListener* listener){
+void EventBase::unregisterListener(Listener* listener){
 	::close(listener->getFd());
 	this->_listeners.erase(listener->getFd());
 	listener->onClosed();
 	this->notifyObserver(EVENT_LISTENER_UNREGISTERED, listener);
 }
 
-void EventBase::registerService(RoleService* service){
+void EventBase::registerService(Service* service){
 	struct epoll_event ev = {0};
 	ev.events = EPOLLIN|EPOLLOUT|EPOLLET;
 	ev.data.fd = service->getFd();
@@ -217,15 +217,15 @@ void EventBase::registerService(RoleService* service){
 	this->notifyObserver(EVENT_SERVICE_REGISTERED, service);
 }
 
-void EventBase::unregisterService(RoleService* service){
+void EventBase::unregisterService(Service* service){
 	::close(service->getFd());
 	service->disconnect();
 	this->_services.erase(service->getFd());
 	this->notifyObserver(EVENT_SERVICE_UNREGISTERED, service);
 }
 
-RoleService* EventBase::findService(int fd){
-	map<int, RoleService*>::iterator iter = this->_services.find(fd);
+Service* EventBase::findService(int fd){
+	map<int, Service*>::iterator iter = this->_services.find(fd);
 	if(iter == this->_services.end())
 		return NULL;
 	return iter->second;
@@ -233,48 +233,48 @@ RoleService* EventBase::findService(int fd){
 
 //////////////////////////////////////////////////////////////////////
 void EventBase::_doAccept(int fd){
-	map<int, RoleListener*>::iterator iter = this->_listeners.find(fd);
+	map<int, Listener*>::iterator iter = this->_listeners.find(fd);
 	if(iter == this->_listeners.end()){
 		VAS_LOGGER_ERROR("unable to find listener on fd = %d", fd);
 		return;
 	}
 
-	RoleListener* listener = iter->second;
+	Listener* listener = iter->second;
 	int clientFd = -1;
 	while((clientFd = Helper::Socket::accept(fd)) >= 0)
 		listener->onAccepted(clientFd);
 }
 
 void EventBase::_doRead(int fd){
-	map<int, RoleService*>::iterator iter = this->_services.find(fd);
+	map<int, Service*>::iterator iter = this->_services.find(fd);
 	if(iter == this->_services.end()){
 		VAS_LOGGER_ERROR("unable to find service on fd = %d", fd);
 		return;
 	}
 
-	RoleService* service = iter->second;
+	Service* service = iter->second;
 	service->read();
 }
 
 void EventBase::_doWrite(int fd){
-	map<int, RoleService*>::iterator iter = this->_services.find(fd);
+	map<int, Service*>::iterator iter = this->_services.find(fd);
 	if(iter == this->_services.end()){
 		VAS_LOGGER_ERROR("unable to find service on fd = %d", fd);
 		return;
 	}
 
-	RoleService* service = iter->second;
-	if(service->getState() == RoleService::STATE_CONNECTING)
+	Service* service = iter->second;
+	if(service->getState() == Service::STATE_CONNECTING)
 		service->connect();
 	else
 		service->write();
 }
 
 void EventBase::_doShutdown(){
-	for(map<int, RoleService*>::iterator iter = this->_services.begin(); iter != this->_services.end();)
+	for(map<int, Service*>::iterator iter = this->_services.begin(); iter != this->_services.end();)
 		this->unregisterService((iter++)->second);
 
-	for(map<int, RoleListener*>::iterator iter = this->_listeners.begin(); iter != this->_listeners.end();)
+	for(map<int, Listener*>::iterator iter = this->_listeners.begin(); iter != this->_listeners.end();)
 		this->unregisterListener((iter++)->second);
 
 	this->notifyObserver(EVENT_STOPPED, NULL);

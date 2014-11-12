@@ -6,6 +6,7 @@ SET(CMAKE_CXX_FLAGS "-g -Wall -DDEBUG")
 
 INCLUDE_DIRECTORIES(
 	include
+	../include
 )
 
 AUX_SOURCE_DIRECTORY(src SRC_LIST)

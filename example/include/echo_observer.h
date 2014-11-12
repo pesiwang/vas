@@ -10,11 +10,11 @@
 
 #include <map>
 #include <time.h>
-#include "vas/role_observer.h"
-#include "vas/role_listener.h"
-#include "vas/role_service.h"
+#include "vas/observer.h"
+#include "vas/listener.h"
+#include "vas/service.h"
 
-class EchoObserver : public vas::RoleObserver
+class EchoObserver : public vas::Observer
 {
 private:
 	EchoObserver();
@@ -27,16 +27,16 @@ public:
 	void onStopped();
 	void onTimer();
 
-	void onListenerRegistered(vas::RoleListener* listener);
-	void onListenerUnregistered(vas::RoleListener* listener);
+	void onListenerRegistered(vas::Listener* listener);
+	void onListenerUnregistered(vas::Listener* listener);
 
-	void onServiceRegistered(vas::RoleService* service);
-	void onServiceUnregistered(vas::RoleService* service);
-	void onServiceDataArrived(vas::RoleService* service);
-	void onServiceDataSent(vas::RoleService* service);
+	void onServiceRegistered(vas::Service* service);
+	void onServiceUnregistered(vas::Service* service);
+	void onServiceDataArrived(vas::Service* service);
+	void onServiceDataSent(vas::Service* service);
 
 private:
-	std::map<vas::RoleService*, time_t> _services;
+	std::map<vas::Service*, time_t> _services;
 };
 
 #endif /* ECHO_OBSERVER_H_ */

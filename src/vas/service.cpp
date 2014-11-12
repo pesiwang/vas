@@ -6,18 +6,18 @@
  */
 
 #include <stdio.h>
-#include "role_service.h"
-#include "event_base.h"
-#include "helper.h"
+#include "vas/service.h"
+#include "vas/event_base.h"
+#include "vas/helper.h"
 
 using namespace vas;
 
-RoleService::RoleService(int fd) : _fd(fd), _state(STATE_DISCONNECTED), _input(0), _output(0){
+Service::Service(int fd) : _fd(fd), _state(STATE_DISCONNECTED), _input(0), _output(0){
 	this->_input = new Buffer();
 	this->_output = new Buffer();
 }
 
-RoleService::~RoleService(){
+Service::~Service(){
 	if(NULL != this->_input){
 		delete this->_input;
 		this->_input = NULL;
@@ -28,25 +28,25 @@ RoleService::~RoleService(){
 	}
 }
 
-int RoleService::getFd() const{
+int Service::getFd() const{
 	return this->_fd;
 }
 
-Buffer* RoleService::getInput(){
+Buffer* Service::getInput(){
 	return this->_input;
 }
 
-Buffer* RoleService::getOutput(){
+Buffer* Service::getOutput(){
 	return this->_output;
 }
 
-RoleService::State RoleService::getState(){
+Service::State Service::getState(){
 	return this->_state;
 }
 
 ///////////////////////////////////////////////////////////////////////
 
-void RoleService::connect(){
+void Service::connect(){
 	if(this->_state == STATE_CONNECTED){
 		VAS_LOGGER_ERROR("invalid state(%d) on service(%d) detected when attempting to connect", this->_state, this->_fd);
 		EventBase::instance()->unregisterService(this);
@@ -61,14 +61,14 @@ void RoleService::connect(){
 	this->onConnected();
 }
 
-void RoleService::disconnect(){
+void Service::disconnect(){
 	if(this->_state != STATE_DISCONNECTED){
 		this->_state = STATE_DISCONNECTED;
 		this->onDisconnected();
 	}
 }
 
-void RoleService::read(){
+void Service::read(){
 	if(this->_state != STATE_CONNECTED){
 		VAS_LOGGER_ERROR("invalid state(%d) on service(%d) detected when attempting to read", this->_state, this->_fd);
 		EventBase::instance()->unregisterService(this);
@@ -83,7 +83,7 @@ void RoleService::read(){
 	this->onDataArrived();
 }
 
-void RoleService::write(){
+void Service::write(){
 	if(this->_state != STATE_CONNECTED){
 		VAS_LOGGER_ERROR("invalid state(%d) on service(%d) detected when attempting to write", this->_state, this->_fd);
 		EventBase::instance()->unregisterService(this);

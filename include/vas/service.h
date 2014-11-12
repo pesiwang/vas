@@ -1,18 +1,18 @@
 /*
- * role_service.h
+ * service.h
  *
  *  Created on: Oct 9, 2014
  *      Author: chenrui
  */
 
-#ifndef VAS_ROLE_SERVICE_H_
-#define VAS_ROLE_SERVICE_H_
+#ifndef VAS_SERVICE_H_
+#define VAS_SERVICE_H_
 
 #include "buffer.h"
 
 namespace vas
 {
-	class RoleService
+	class Service
 	{
 	public:
 		enum State
@@ -23,8 +23,8 @@ namespace vas
 		};
 
 	public:
-		RoleService(int fd);
-		virtual ~RoleService();
+		Service(int fd);
+		virtual ~Service();
 
 		int getFd() const;
 		Buffer* getInput();
@@ -49,4 +49,4 @@ namespace vas
 }
 
 
-#endif /* VAS_ROLE_SERVICE_H_ */
+#endif /* VAS_SERVICE_H_ */

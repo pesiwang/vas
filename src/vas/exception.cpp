@@ -5,9 +5,9 @@
  *      Author: chenrui
  */
 
-#include "exception.h"
-using namespace std;
+#include "vas/exception.h"
 
+using namespace std;
 using namespace vas;
 
 Exception::Exception(string msg) : _msg(msg)

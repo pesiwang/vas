@@ -8,9 +8,9 @@
 #ifndef ECHO_LISTENER_H_
 #define ECHO_LISTENER_H_
 
-#include "vas/role_listener.h"
+#include "vas/listener.h"
 
-class EchoListener : public vas::RoleListener
+class EchoListener : public vas::Listener
 {
 public:
 	EchoListener(int fd);

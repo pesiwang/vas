@@ -1,20 +1,20 @@
 /*
- * role_listener.h
+ * listener.h
  *
  *  Created on: Oct 9, 2014
  *      Author: chenrui
  */
 
-#ifndef VAS_ROLE_LISTENER_H_
-#define VAS_ROLE_LISTENER_H_
+#ifndef VAS_LISTENER_H_
+#define VAS_LISTENER_H_
 
 namespace vas
 {
-	class RoleListener
+	class Listener
 	{
 	public:
-		RoleListener(int fd);
-		virtual ~RoleListener();
+		Listener(int fd);
+		virtual ~Listener();
 
 		int getFd() const;
 
@@ -27,4 +27,4 @@ namespace vas
 	};
 }
 
-#endif /* VAS_ROLE_LISTENER_H_ */
+#endif /* VAS_LISTENER_H_ */

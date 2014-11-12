@@ -7,8 +7,8 @@
 
 #include <stdlib.h>
 #include <arpa/inet.h>
-#include "buffer.h"
-#include "exception.h"
+#include "vas/buffer.h"
+#include "vas/exception.h"
 
 using namespace vas;
 
