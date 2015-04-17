@@ -13,7 +13,9 @@
 #include "handler/VasClientHandler.h"
 #include "handler/VasListenerHandler.h"
 #include "handler/VasServerHandler.h"
+#include "handler/VasRoutineHandler.h"
 #include <map>
+#include <list>
 
 class VasEventbase {
 public:
@@ -52,6 +54,7 @@ public:
 	bool addListener(int fd, VasListenerHandler *handler);
 	bool addClient(int fd, VasClientHandler *handler, time_t maxIdleTime);
 	bool addServer(int fd, VasServerHandler *handler, time_t maxIdleTime);
+	void addRoutine(VasRoutineHandler *handler);
 	bool connectSocket(int fd);
 	bool writeSocket(int fd, VasBuffer *buffer);
 	bool removeSocket(int fd);
@@ -65,11 +68,13 @@ private:
 
 	void _cleanupRunloop();
 	void _cleanupService();
+	void _notifyRoutines();
 
 private:
 	ServiceState _serviceState;
 	std::map<int, Socket*> _activeSockets;
 	std::map<int, Socket*> _closingSockets;
+	std::list<VasRoutineHandler *> _routineHandlers;
 	int _epollFd;
 };
 

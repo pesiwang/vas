@@ -18,7 +18,7 @@ int main() {
 	MyClientHandler clientHandler;
 
 	VasEventbase::instance()->addListener(listenerFd, &listenerHandler);
-	VasEventbase::instance()->addClient(clientFd, &clientHandler, 30);
+	VasEventbase::instance()->addClient(clientFd, &clientHandler, 3);
 	VasEventbase::instance()->dispatch();
 	return 0;
 }

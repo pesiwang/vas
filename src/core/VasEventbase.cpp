@@ -72,6 +72,10 @@ bool VasEventbase::addListener(int fd, VasListenerHandler *handler) {
 	return true;
 }
 
+void VasEventbase::addRoutine(VasRoutineHandler *handler) {
+	this->_routineHandlers.push_back(handler);
+}
+
 bool VasEventbase::addClient(int fd, VasClientHandler *handler, time_t maxIdleTime) {
 	if (this->_activeSockets.find(fd) != this->_activeSockets.end()) {
 		VAS_LOGGER_ERROR("cannot add a client socket on fd = %d", fd);
@@ -243,6 +247,7 @@ void VasEventbase::dispatch() {
 			}
 		}
 
+		this->_notifyRoutines();
 		this->_cleanupRunloop();
 	}
 
@@ -276,6 +281,12 @@ void VasEventbase::_cleanupRunloop() {
 		delete iter->second;
 	}
 	this->_closingSockets.clear();
+}
+
+void VasEventbase::_notifyRoutines() {
+	for (list<VasRoutineHandler *>::iterator iter = this->_routineHandlers.begin(); iter != this->_routineHandlers.end(); ++iter) {
+		(*iter)->onRoutine();
+	}
 }
 
 void VasEventbase::_cleanupService() {
