@@ -59,6 +59,8 @@ public:
 	bool writeSocket(int fd, VasBuffer *buffer);
 	bool removeSocket(int fd);
 
+	std::map<int, Socket *> getActiveSockets(SocketType type);
+
 	void dispatch();
 
 private:

@@ -184,6 +184,16 @@ bool VasEventbase::removeSocket(int fd) {
 	return true;
 }
 
+map<int, VasEventbase::Socket *> VasEventbase::getActiveSockets(SocketType type) {
+	map<int, VasEventbase::Socket*> sockets;
+	for (map<int, VasEventbase::Socket *>::iterator iter = this->_activeSockets.begin(); iter != this->_activeSockets.end(); ++iter) {
+		if ((iter->second->type == type) && (iter->second->state == SocketStateConnected)) {
+			sockets[iter->first] = iter->second;
+		}
+	}
+	return sockets;
+}
+
 void VasEventbase::dispatch() {
 	this->_serviceState = ServiceStateRunning;
 	VasHelper::Clock::sync();
